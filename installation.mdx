@@ -1,0 +1,121 @@
+---
+title: "How to Install Illegalcord on Windows, macOS, and Linux"
+sidebarTitle: "Installation"
+description: "Step-by-step instructions to download and install Illegalcord on Windows, macOS, or Linux — takes just a few minutes to complete."
+---
+
+Installing Illegalcord takes just a few minutes. The installer patches your existing Discord desktop application and leaves everything else on your system untouched. Follow the steps below for your operating system, then launch Discord to confirm the installation succeeded.
+
+## Prerequisites
+
+Before you begin, make sure the **Discord desktop app** is already installed and has been launched at least once. Illegalcord patches the Discord installation it finds on your machine — it cannot run without it.
+
+## Installation Steps
+
+<Tabs>
+  <Tab title="Windows">
+    <Warning>
+      Some antivirus software may flag the Illegalcord installer as a false positive because it patches another application's files. This is expected behavior. You can safely allow the installer to run; no malicious code is present. If you are unsure, review the open-source code on the Illegalcord GitHub repository before proceeding.
+    </Warning>
+
+    <Steps>
+      <Step title="Download the installer">
+        Go to [illegalcord.xyz](https://illegalcord.xyz) and click **Download for Windows**. Save the `IllegalcordInstaller.exe` file to a convenient location such as your Downloads folder.
+      </Step>
+      <Step title="Run the installer">
+        Double-click `IllegalcordInstaller.exe`. If Windows SmartScreen appears, click **More info** → **Run anyway**. The installer will automatically locate your Discord installation and apply the patch.
+      </Step>
+      <Step title="Relaunch Discord">
+        Once the installer finishes, fully close Discord from the system tray (right-click the tray icon → **Quit Discord**), then reopen it. Illegalcord loads automatically on every subsequent Discord launch.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="macOS">
+    <Steps>
+      <Step title="Download the disk image">
+        Visit [illegalcord.xyz](https://illegalcord.xyz) and click **Download for macOS**. This downloads an `Illegalcord.dmg` disk image to your Downloads folder.
+      </Step>
+      <Step title="Open the disk image">
+        Double-click `Illegalcord.dmg` to mount it. A Finder window opens showing the Illegalcord installer app.
+      </Step>
+      <Step title="Drag to Applications">
+        Drag the **Illegalcord Installer** icon into your **Applications** folder shortcut inside the Finder window.
+      </Step>
+      <Step title="Run the installer">
+        Open **Launchpad** or your **Applications** folder and launch **Illegalcord Installer**. The installer will find your Discord app, apply the patch, and confirm when it's done. If macOS shows a Gatekeeper warning, go to **System Settings → Privacy & Security** and click **Open Anyway**.
+      </Step>
+      <Step title="Relaunch Discord">
+        Quit Discord completely (⌘ + Q), then reopen it from your Applications folder or Dock. Illegalcord is now active.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Linux">
+    <Steps>
+      <Step title="Choose your installation method">
+        Illegalcord offers two methods on Linux: a **one-line shell installer** (recommended for most users) and a **manual installation** for those who prefer full control.
+
+        <Note>
+          If you installed Discord via **Flatpak** or **Snap**, the one-line installer may not detect it automatically. Use the manual method and point the installer at your Flatpak/Snap Discord path. Common paths are `/var/lib/flatpak/app/com.discordapp.Discord` (system) or `~/.local/share/flatpak/app/com.discordapp.Discord` (user).
+        </Note>
+      </Step>
+
+      <Step title="Option A — Shell installer (recommended)">
+        Open a terminal and run:
+
+        ```bash
+        curl -sSL https://illegalcord.xyz/install.sh | sh
+        ```
+
+        The script detects your Discord installation, downloads the latest Illegalcord release, and applies the patch automatically. Follow any prompts that appear.
+      </Step>
+
+      <Step title="Option B — Manual installation">
+        If you prefer not to pipe directly to `sh`, download and inspect the archive first:
+
+        ```bash
+        # Download the latest release archive
+        curl -sSL https://illegalcord.xyz/releases/latest/illegalcord-linux.tar.gz \
+          -o illegalcord-linux.tar.gz
+
+        # Extract the archive
+        tar -xzf illegalcord-linux.tar.gz
+
+        # Enter the extracted directory
+        cd illegalcord-linux
+
+        # Run the installer
+        ./install.sh
+        ```
+
+        The installer will prompt you for the path to your Discord installation if it cannot detect it automatically.
+      </Step>
+
+      <Step title="Relaunch Discord">
+        Close any running Discord instance and relaunch it from your application launcher or terminal. Illegalcord initializes automatically each time Discord starts.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Verifying the Installation
+
+After Discord relaunches, confirm Illegalcord is active:
+
+<Steps>
+  <Step title="Open Discord Settings">
+    Click the **gear icon** (⚙️) in the bottom-left corner of Discord to open User Settings.
+  </Step>
+  <Step title="Scroll to the Illegalcord section">
+    Scroll past the standard Discord settings categories. You should see a new **Illegalcord** section near the bottom of the sidebar, with entries such as **Themes**, **Plugins**, and **Keybinds**.
+  </Step>
+</Steps>
+
+If you don't see the Illegalcord section, try fully quitting and restarting Discord. If the problem persists, re-run the installer to re-apply the patch.
+
+## Updating Illegalcord
+
+Illegalcord checks for updates automatically each time Discord launches and applies them silently in the background. You don't need to do anything — you'll always be on the latest version.
+
+To update manually, open Discord Settings → scroll to **Illegalcord** → click **About** → click **Update Illegalcord**. Illegalcord will fetch and apply the latest release immediately.

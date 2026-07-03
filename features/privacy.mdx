@@ -1,0 +1,72 @@
+---
+title: "Illegalcord Privacy Controls: Telemetry and Tracking"
+sidebarTitle: "Privacy"
+description: "Protect your privacy on Discord with Illegalcord — disable telemetry, block trackers, hide typing indicators, and control read receipts."
+---
+
+Illegalcord gives you control over your privacy on Discord without requiring any account changes or server-side configuration. Every privacy feature described here operates entirely on your local client — you enable it once, and Illegalcord enforces it silently from that point on.
+
+## Disable Telemetry
+
+Discord collects analytics events as you use the client — button clicks, page views, feature interactions, and more. The **NoTrack** plugin intercepts these events before they leave your machine and drops them entirely.
+
+To enable it:
+
+1. Open **Settings → Plugins**.
+2. Find **NoTrack** in the list.
+3. Toggle it **on**.
+
+No further configuration is needed. NoTrack activates immediately and persists across restarts.
+
+<Note>
+  NoTrack blocks client-side analytics payloads. It does not affect Discord's core API calls — your messages, voice connections, and account activity are still processed normally by Discord's servers.
+</Note>
+
+## Hide Typing Indicator
+
+When you start typing in a channel or DM, Discord broadcasts a "User is typing…" notice to everyone viewing that conversation. Illegalcord lets you suppress that broadcast so others never see it.
+
+Enable it under **Settings → Privacy → Hide Typing Indicator**. Once on, you can type freely without signaling your activity to anyone in the channel.
+
+## Hide Read Receipts
+
+By default, Discord marks messages as read on your behalf and can surface that information to other users in certain contexts. Enabling **Hide Read Receipts** under **Settings → Privacy** prevents your client from sending those acknowledgement signals.
+
+This affects direct messages and group DMs where read states are most visible.
+
+## Block Tracking Scripts
+
+Beyond telemetry events, Discord loads known third-party tracking endpoints in some client builds. Illegalcord maintains a blocklist of these endpoints and intercepts requests to them at the client network layer — no browser extension or external proxy required.
+
+This feature is enabled automatically when you install Illegalcord. You can verify its status or review the blocked endpoint list under **Settings → Privacy → Blocked Trackers**.
+
+## Image Link Safety
+
+When you click an image link sent by another user, your client makes a direct request to that URL — which can expose your IP address to whoever controls the server hosting that image. Illegalcord's **Image Proxy** option routes external image requests through a neutral proxy instead.
+
+Enable it under **Settings → Privacy → Proxy External Images**. Thumbnails and previews load normally; only the originating request is rerouted.
+
+## Screenshot Mode
+
+Screenshot Mode blurs sensitive information — including usernames, discriminators, and avatar thumbnails — across the entire Discord UI. Use it whenever you want to share a screenshot of a conversation without exposing the identities of the people involved.
+
+Toggle it on and off under **Settings → Privacy → Screenshot Mode**, or assign it a keyboard shortcut via the [Keybinds](/features/keybinds) settings.
+
+## Privacy Settings Summary
+
+| Setting | What It Does | Where |
+|---|---|---|
+| NoTrack Plugin | Blocks Discord analytics events before they're sent | Settings → Plugins → NoTrack |
+| Hide Typing | Stops broadcasting your typing status to others | Settings → Privacy |
+| Hide Read Receipts | Hides seen indicators in DMs and group chats | Settings → Privacy |
+| Block Tracking Scripts | Intercepts third-party tracker requests client-side | Settings → Privacy → Blocked Trackers |
+| Proxy External Images | Routes image requests through a neutral proxy | Settings → Privacy |
+| Screenshot Mode | Blurs usernames and avatars for safe sharing | Settings → Privacy |
+
+<Note>
+  All of these features are client-side only. They change what your client sends and displays — they do not alter or delete anything stored on Discord's servers. Your account history, messages, and metadata remain on Discord's infrastructure regardless of these settings.
+</Note>
+
+<Warning>
+  Illegalcord cannot guarantee full anonymity. Your IP address, account metadata, and message content are still handled by Discord's servers under their own privacy policy. Use these features at your own discretion and review Discord's Terms of Service to understand what data they retain independently of client behavior.
+</Warning>

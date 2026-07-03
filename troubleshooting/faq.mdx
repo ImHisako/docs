@@ -1,0 +1,52 @@
+---
+title: "Illegalcord FAQ: Setup, Safety, Updates, and Plugins"
+sidebarTitle: "FAQ"
+description: "Answers to the most common questions about Illegalcord, covering safety, Discord ToS implications, compatibility, updates, and performance."
+---
+
+Whether you're evaluating Illegalcord for the first time or running into something unexpected, the answers below cover the questions users ask most often. Topics include account safety, Discord's Terms of Service stance on client mods, update behaviour, platform support, and data storage. If you don't find what you need here, open an issue on GitHub or drop into the community Discord server.
+
+<Accordion title="Is Illegalcord safe to use?">
+  Yes. Illegalcord is fully open-source, so anyone can inspect every line of code before installing it. The project is actively reviewed by community contributors, and no version of Illegalcord has ever stolen tokens, passwords, or personal data. To stay safe, always download Illegalcord exclusively from the official GitHub releases page — never from third-party mirrors or unofficial Discord servers.
+</Accordion>
+
+<Accordion title="Will I get banned for using Illegalcord?">
+  Illegalcord modifies the Discord client, which technically violates Discord's Terms of Service. Use it at your own risk. In practice, account bans for client mods are rare and Discord has not historically conducted mass bans over their use — but the possibility is not zero. Illegalcord does not automate actions or send requests that differ from normal client behavior, which significantly reduces your risk profile.
+</Accordion>
+
+<Accordion title="Does Illegalcord steal my Discord token?">
+  No. Illegalcord never reads, logs, or transmits your Discord token, password, or any other credentials. The source code is publicly available on GitHub, and you can verify this yourself at any time. If you ever see a fork or unofficial build claiming to be Illegalcord that you cannot verify against the official repository, treat it as untrusted and do not install it.
+</Accordion>
+
+<Accordion title="Does Illegalcord work with Discord Canary and PTB?">
+  Yes. Illegalcord is compatible with all three official Discord release channels — Stable, Public Test Build (PTB), and Canary. You can install it on any combination of these builds, and each installation is managed independently. Switch between builds normally; Illegalcord will load in whichever Discord client it has been patched into.
+</Accordion>
+
+<Accordion title="How do I update Illegalcord?">
+  Illegalcord checks for updates automatically every time Discord launches. When a new version is available, it downloads and applies the update silently in the background. You can also trigger a manual update at any time by navigating to **Settings → Illegalcord → About** and clicking **Check for Updates**. If the automatic updater fails, re-running the installer from the official releases page will also bring you up to date.
+</Accordion>
+
+<Accordion title="Why does my antivirus flag the Illegalcord installer?">
+  This is a false positive. Client mod installers patch application files on disk, a behavior that heuristic antivirus engines often flag as suspicious — even when the software is completely benign. Illegalcord's code is open source, so you can audit it yourself or check VirusTotal scan results linked on the official releases page. If your antivirus quarantines the installer, add an exception and re-download from the official GitHub releases page.
+</Accordion>
+
+<Accordion title="Do plugins affect Discord's performance?">
+  The performance impact of plugins is minimal for most users. Each plugin you enable adds a small amount of JavaScript that runs inside Discord's renderer process. If you notice slowdowns or increased memory usage, try disabling plugins you don't actively use — navigate to **Settings → Illegalcord → Plugins** and toggle off anything you no longer need. Keeping your active plugin list lean is the single most effective way to maintain a snappy client.
+</Accordion>
+
+<Accordion title="Can I use Illegalcord on mobile?">
+  No. Illegalcord is a desktop-only client mod and supports Windows, macOS, and Linux. Mobile versions of Discord (iOS and Android) use entirely different application architectures that do not support the same patching approach. There is currently no mobile equivalent of Illegalcord in this project.
+</Accordion>
+
+<Accordion title="Where is my Illegalcord data stored?">
+  All of your Illegalcord settings, theme preferences, and plugin configurations are stored locally on your device:
+
+  - **Windows:** `%APPDATA%\Illegalcord`
+  - **macOS / Linux:** `~/.config/Illegalcord`
+
+  If you enable the optional **Cloud Sync** feature, your configuration file is synced to Illegalcord's sync service so you can restore it on another machine. Cloud Sync never touches your Discord messages, account credentials, or server data — only Illegalcord's own settings.
+</Accordion>
+
+<Accordion title="How do I report a bug?">
+  The best way to report a bug is to open an issue on the [Illegalcord GitHub repository](https://github.com/illegalcord/illegalcord). Before filing, search the existing issues to see if it has already been reported. Include your Illegalcord version (found in **Settings → Illegalcord → About**), your operating system, and steps to reproduce the problem. For urgent help or to discuss the issue with the community, you can also join the official Illegalcord support Discord server — the invite link is pinned in the GitHub repository's README.
+</Accordion>

@@ -1,0 +1,98 @@
+{
+  "projectType": "frontend",
+  "projectName": "Illegalcord",
+  "projectDescription": "A feature-rich, customizable Discord client that enhances your Discord experience with themes, plugins, and advanced settings.",
+  "theme": "almond",
+  "primaryColor": "#ef7025",
+  "lightColor": "#eec9bc",
+  "darkColor": "#4fa1ab",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "customization/themes",
+              "customization/plugins",
+              "customization/settings"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/overview",
+              "features/message-tweaks",
+              "features/privacy",
+              "features/keybinds"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/faq",
+              "troubleshooting/common-issues",
+              "troubleshooting/uninstall"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Plugin Dev",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "plugin-dev/overview",
+              "plugin-dev/getting-started"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "plugin-dev/api/modules",
+              "plugin-dev/api/events",
+              "plugin-dev/api/components"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "plugin-dev/guides/first-plugin",
+              "plugin-dev/guides/publishing"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Easy one-click installation on Windows, macOS, and Linux",
+    "Theme support with a built-in theme store",
+    "Plugin system for extending Discord functionality",
+    "Privacy and security enhancements",
+    "Custom keybinds and shortcuts",
+    "Advanced message display options",
+    "Automatic updates",
+    "Developer tools for plugin creation"
+  ],
+  "publicApiSurface": [
+    "Plugin API: definePlugin()",
+    "Plugin API: Webpack module finder",
+    "Plugin API: Patcher / monkey-patching utilities",
+    "Plugin API: React component utilities",
+    "Plugin API: Event system",
+    "Settings API: definePluginSettings()",
+    "UI API: showToast(), openModal()",
+    "Theme: CSS variable overrides"
+  ]
+}

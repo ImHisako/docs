@@ -1,0 +1,112 @@
+---
+title: "Extend Discord's Features with Illegalcord Plugins"
+sidebarTitle: "Plugins"
+description: "Install, enable, and configure Illegalcord plugins to add powerful new features and remove annoyances from your Discord client experience."
+---
+
+Illegalcord plugins are JavaScript modules that hook into Discord's internal code to add features, remove annoyances, or change how the client behaves. From auto-translating messages to showing deleted texts and boosting call volume, plugins let you shape Discord around how you actually use it.
+
+## What Plugins Are
+
+A plugin is a `.js` file that Illegalcord loads alongside Discord at startup. Plugins can intercept Discord's internal functions, add new UI elements, react to events, and read or modify data before it reaches the screen. They run entirely on your machine — no external server is required for most plugins.
+
+## Browsing Plugins
+
+<Steps>
+  <Step title="Open Discord Settings">
+    Click the **gear icon** in the bottom-left corner of Discord.
+  </Step>
+  <Step title="Go to the Plugins tab">
+    Scroll to the **Illegalcord** section in the left sidebar and click **Plugins**. You'll see a list of all installed plugins — built-in ones are listed first, followed by any external plugins you've added.
+  </Step>
+</Steps>
+
+## Built-in vs. External Plugins
+
+<CardGroup cols={2}>
+  <Card title="Built-in Plugins" icon="cube">
+    Built-in plugins ship with Illegalcord and are maintained by the Illegalcord team. They are audited for safety, kept up to date automatically, and cover the most popular use cases. You cannot delete them, but you can disable any you don't want.
+  </Card>
+  <Card title="External Plugins" icon="puzzle-piece">
+    External plugins are community-made additions you install via URL. They give you access to a much wider feature set but are not officially audited. You are responsible for reviewing external plugins before you install them.
+  </Card>
+</CardGroup>
+
+## Installing an External Plugin
+
+<Steps>
+  <Step title="Get the plugin URL">
+    Find the raw `.js` URL for the plugin — this is usually linked from the plugin author's GitHub repository or documentation page.
+  </Step>
+  <Step title="Open the Plugins tab">
+    Go to **Discord Settings → Illegalcord → Plugins**.
+  </Step>
+  <Step title="Click Install Plugin">
+    Click the **Install Plugin** button at the top of the panel.
+  </Step>
+  <Step title="Paste the URL">
+    Paste the plugin's direct URL into the input field and click **Install**. Illegalcord fetches the file and registers it.
+
+    ```text
+    https://raw.githubusercontent.com/author/repo/main/MyPlugin.js
+    ```
+  </Step>
+  <Step title="Enable the plugin">
+    After installation, flip the toggle next to the plugin's name to enable it. Some plugins activate immediately; others ask you to reload Discord.
+  </Step>
+</Steps>
+
+<Warning>
+  Plugins from untrusted sources execute JavaScript with full access to your Discord session. Only install external plugins from authors you trust, and always review the source code before installing. Never install a plugin shared as a raw paste or a link from an unknown user.
+</Warning>
+
+## Enabling and Disabling Plugins
+
+Each plugin in the list has a toggle switch on its right side. Turn the toggle on to activate a plugin and off to deactivate it without uninstalling it. Changes take effect immediately for most plugins; a small number require a Discord reload.
+
+## Configuring Plugin Settings
+
+Many plugins expose their own options panel.
+
+<Steps>
+  <Step title="Find the plugin">
+    Locate the plugin in **Settings → Illegalcord → Plugins**.
+  </Step>
+  <Step title="Open settings">
+    Click the **gear icon** to the right of the plugin's toggle. A settings panel slides open with that plugin's specific options.
+  </Step>
+  <Step title="Adjust and close">
+    Change any options you want — they save automatically. Close the panel when you're done.
+  </Step>
+</Steps>
+
+<Note>
+  If a plugin doesn't show a gear icon, it has no configurable options.
+</Note>
+
+## Updating Plugins
+
+<Accordion title="Automatic updates">
+  By default, Illegalcord checks for plugin updates each time Discord starts. When an update is available, Illegalcord downloads and applies it in the background. Built-in plugins always update automatically alongside Illegalcord itself.
+</Accordion>
+
+<Accordion title="Manual update">
+  To force an update check for a specific plugin, locate it in the **Plugins** tab and click the **Update** button that appears next to its name when an update is available. You can also click **Check for Updates** at the top of the panel to refresh all plugins at once.
+</Accordion>
+
+## Featured Built-in Plugins
+
+These plugins ship with every Illegalcord installation and are ready to enable with a single toggle:
+
+| Plugin | Description |
+|---|---|
+| BetterRoleColors | Colors usernames throughout Discord by the user's highest-ranked role color |
+| MessageLogger | Captures deleted and edited messages so you can still read them after they're gone |
+| SpotifyControls | Adds Spotify playback controls (play, pause, skip, seek) directly to the Discord sidebar |
+| Translate | Automatically translates incoming messages into your chosen language with a single click |
+| VolumeBooster | Raises the maximum volume cap for voice calls beyond Discord's default 200% limit |
+| NoTrack | Disables Discord's built-in analytics, telemetry, and behavioral tracking |
+
+## Building Your Own Plugin
+
+If you want to go further and create a plugin yourself, Illegalcord exposes a full plugin API with hooks, patches, and UI utilities. Head to the **Plugin Dev** tab inside Illegalcord settings, or read the plugin development documentation for a step-by-step guide to writing, testing, and publishing your first plugin.

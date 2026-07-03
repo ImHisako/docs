@@ -1,0 +1,123 @@
+---
+title: "How to Uninstall Illegalcord from Discord Completely"
+sidebarTitle: "Uninstall"
+description: "Completely remove Illegalcord from your Discord installation on Windows, macOS, or Linux and restore Discord to its default state."
+---
+
+Uninstalling Illegalcord fully restores Discord to its original, unmodified state. Your Discord account, messages, servers, and friends are completely unaffected — Illegalcord only modifies local client files. Follow the steps for your operating system below.
+
+<Note>
+  If you only want to stop Illegalcord temporarily without removing it, hold **Shift** while launching Discord to start in Safe Mode instead. Uninstalling is permanent and requires re-running the installer to get Illegalcord back.
+</Note>
+
+<Tabs>
+  <Tab title="Windows">
+    <Steps>
+      <Step title="Uninstall from within Discord">
+        Open Discord and navigate to **Settings → Illegalcord → About**, then click **Uninstall Illegalcord**. Confirm the prompt. Discord will relaunch automatically once the patch is removed.
+      </Step>
+      <Step title="Alternative: re-run the installer">
+        If you can't access Discord Settings, download the latest Illegalcord installer from the official GitHub releases page, run it, and choose **Uninstall** when prompted.
+      </Step>
+      <Step title="Confirm Discord is running without Illegalcord">
+        Relaunch Discord. The **Illegalcord** section should no longer appear in Settings, confirming the uninstall was successful.
+      </Step>
+    </Steps>
+
+    <Tip>
+      After uninstalling, your Illegalcord configuration files remain at `%APPDATA%\Illegalcord`. Delete this folder if you want a complete clean-up and don't plan to reinstall.
+    </Tip>
+  </Tab>
+
+  <Tab title="macOS">
+    <Steps>
+      <Step title="Uninstall from within Discord">
+        Open Discord and navigate to **Settings → Illegalcord → About**, then click **Uninstall Illegalcord**. Confirm the prompt. Discord will relaunch cleanly once the patch is removed.
+      </Step>
+      <Step title="Alternative: re-run the installer .dmg">
+        Mount the Illegalcord `.dmg` file and run the installer. On the first screen, click **Uninstall** instead of Install, and follow the prompts.
+      </Step>
+      <Step title="Manual removal via Terminal (if the above options are unavailable)">
+        If Discord won't launch or the installer fails, you can remove Illegalcord manually. Open **Terminal** and run:
+
+        ```bash
+        cd /Applications/Discord.app/Contents/Resources
+        mv app.asar.bak app.asar
+        rm -rf Illegalcord
+        ```
+
+        Then relaunch Discord normally.
+      </Step>
+    </Steps>
+
+    <Tip>
+      After uninstalling, your Illegalcord configuration files remain at `~/.config/Illegalcord`. Delete this folder if you want a complete clean-up and don't plan to reinstall.
+    </Tip>
+  </Tab>
+
+  <Tab title="Linux">
+    <Steps>
+      <Step title="Uninstall using the CLI installer">
+        Open a terminal and run the Illegalcord installer with the uninstall flag:
+
+        ```bash
+        illegalcord-installer --uninstall
+        ```
+
+        The installer will locate your Discord installation, restore the original `app.asar`, and remove Illegalcord's injected files.
+      </Step>
+      <Step title="Alternative: run the uninstall script directly">
+        If the CLI installer isn't available, run the bundled uninstall script:
+
+        ```bash
+        bash ~/.config/discord/illegalcord/uninstall.sh
+        ```
+
+        This script reverses the manual installation steps — it renames `app.asar.bak` back to `app.asar` and deletes Illegalcord's files from Discord's resources folder.
+      </Step>
+      <Step title="Manual removal (if neither option works)">
+        Navigate to Discord's resources directory (commonly `/opt/discord/resources/` or `~/.local/share/discord/resources/`) and perform the following:
+
+        ```bash
+        # Replace the patched asar with the original backup
+        mv app.asar.bak app.asar
+
+        # Remove Illegalcord's injected directory
+        rm -rf illegalcord
+        ```
+
+        Relaunch Discord to confirm it's running without Illegalcord.
+      </Step>
+    </Steps>
+
+    <Tip>
+      After uninstalling, your Illegalcord configuration files remain at `~/.config/Illegalcord`. Delete this folder if you want a complete clean-up and don't plan to reinstall.
+    </Tip>
+  </Tab>
+</Tabs>
+
+## After uninstalling
+
+<Info>
+  Uninstalling Illegalcord will **not** affect your Discord account, messages, servers, or any data stored on Discord's servers. It only removes the local client modifications Illegalcord made to your Discord installation.
+</Info>
+
+Your Illegalcord themes, plugins, and settings files are stored separately from the Discord installation and are **not** removed during uninstallation. If you want to completely wipe all traces of Illegalcord from your system, delete the configuration folder for your platform after uninstalling:
+
+| Platform | Configuration folder |
+|----------|----------------------|
+| Windows  | `%APPDATA%\Illegalcord` |
+| macOS    | `~/.config/Illegalcord` |
+| Linux    | `~/.config/Illegalcord` |
+
+To delete the folder on macOS or Linux, run:
+
+```bash
+rm -rf ~/.config/Illegalcord
+```
+
+On Windows, press **Win+R**, type `%APPDATA%`, press Enter, and delete the `Illegalcord` folder.
+
+<Warning>
+  Deleting the configuration folder is irreversible. If you think you might reinstall Illegalcord later, consider backing up the folder first — it contains all your plugin settings and theme preferences.
+</Warning>

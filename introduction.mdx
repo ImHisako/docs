@@ -1,0 +1,58 @@
+---
+title: "Illegalcord: A Feature-Rich Discord Client Modification"
+sidebarTitle: "Introduction"
+description: "Illegalcord enhances Discord with themes, plugins, privacy controls, and quality-of-life features — all client-side, no account changes needed."
+---
+
+Illegalcord is a client modification that injects directly into your existing Discord installation, unlocking a world of customization that Discord doesn't offer out of the box. From hand-crafted visual themes and powerful plugins to fine-grained privacy controls and programmable keybinds, Illegalcord transforms how you experience Discord — without touching your account, your data, or Discord's servers.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Themes" icon="palette">
+    Apply community-made or custom CSS themes to completely redesign Discord's interface. Switch themes instantly without restarting.
+  </Card>
+  <Card title="Plugins" icon="puzzle-piece">
+    Extend Discord's functionality with plugins for message logging, rich presence, role colors, Spotify controls, and much more.
+  </Card>
+  <Card title="Privacy Controls" icon="shield-halved">
+    Block tracking pixels, suppress read receipts, and control exactly what data leaves your client with built-in privacy toggles.
+  </Card>
+  <Card title="Keybinds" icon="keyboard">
+    Assign custom keyboard shortcuts to any Illegalcord or Discord action — mute, deafen, switch servers, run plugin commands, and beyond.
+  </Card>
+  <Card title="Message Tweaks" icon="message">
+    Edit how messages are displayed, add timestamps, reveal deleted messages, and customize the chat experience to your liking.
+  </Card>
+  <Card title="Auto-Update" icon="arrows-rotate">
+    Illegalcord keeps itself up to date automatically in the background, so you always have the latest features and security patches.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+Illegalcord works by injecting a small loader into the Discord desktop application at launch. This loader runs inside Discord's existing Electron shell, giving Illegalcord access to Discord's internal modules so it can apply themes, activate plugins, and hook into UI components — all in real time.
+
+<Note>
+  Illegalcord is **entirely client-side**. It does not modify Discord's servers, alter your account in any way, or transmit any data on your behalf. Every change you make stays on your own machine.
+</Note>
+
+Because the injection happens locally, uninstalling Illegalcord fully restores Discord to its original state. Your account, messages, and server memberships are never affected.
+
+## Supported Platforms
+
+Illegalcord runs on all three major desktop operating systems:
+
+| Platform | Supported Versions |
+|----------|---------------------|
+| **Windows** | Windows 10 and Windows 11 |
+| **macOS** | macOS 12 Monterey and later |
+| **Linux** | Most mainstream distributions (see install notes for Flatpak/Snap caveats) |
+
+<Info>
+  Mobile versions of Discord (iOS and Android) are not supported. Illegalcord requires the Discord desktop application.
+</Info>
+
+## Ready to Install?
+
+Head over to the [Installation guide](/installation) to get Illegalcord running on your machine in just a few minutes.

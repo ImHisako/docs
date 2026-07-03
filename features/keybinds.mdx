@@ -1,0 +1,90 @@
+---
+title: "Custom Keybinds and Keyboard Shortcuts in Illegalcord"
+sidebarTitle: "Keybinds"
+description: "Assign custom keyboard shortcuts to Discord actions and Illegalcord features — including global hotkeys that work even when Discord is in the background."
+---
+
+Illegalcord lets you assign custom keyboard shortcuts to almost any Discord action or Illegalcord feature. Whether you want a one-key toggle for muting, a shortcut to flip into Compact Mode, or a global hotkey that fires even when Discord is in the background, the Keybinds system gives you the full flexibility to set it up exactly how you want.
+
+## Opening Keybinds Settings
+
+Navigate to **Discord Settings → Illegalcord → Keybinds** to reach the keybinds manager. From here you can see all active shortcuts at a glance, add new ones, and edit or remove existing entries.
+
+## Adding a Keybind
+
+<Steps>
+  <Step title="Open the Keybind Creator">
+    Click the **Add Keybind** button at the top right of the Keybinds tab. A dialog opens with an action picker and a key capture field.
+  </Step>
+  <Step title="Choose an Action">
+    Select the action you want to trigger from the **Action** dropdown. Available options include things like **Toggle Compact Mode**, **Mute/Unmute**, **Deafen/Undeafen**, **Open Quick Switcher**, **Screenshot Mode**, and any toggle exposed by an enabled plugin.
+  </Step>
+  <Step title="Record Your Key Combination">
+    Click inside the **Shortcut** field, then press the key combination you want to use — for example, `Ctrl+Shift+M`. Illegalcord records the combination immediately and displays it in the field. If the combination conflicts with an existing Discord shortcut, a warning banner appears inline.
+  </Step>
+  <Step title="Set Global Mode (Optional)">
+    If you want the shortcut to fire even when Discord is not the focused window, toggle the **Global** switch on. See [Global Keybinds](#global-keybinds) below for platform-specific requirements.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The new keybind appears in your list and is active immediately — no restart required.
+  </Step>
+</Steps>
+
+## Default Keybinds
+
+Illegalcord ships with a minimal set of pre-configured shortcuts that mirror Discord's own defaults. Everything else starts unassigned so you can map actions to whatever feels natural.
+
+| Action | Default Shortcut |
+|---|---|
+| Quick Switcher | `Ctrl+K` |
+| Toggle Mute | *(none)* |
+| Toggle Deafen | *(none)* |
+| Toggle Compact Mode | *(none)* |
+| Screenshot Mode | *(none)* |
+| Open Keybinds Settings | *(none)* |
+| Reload Client | *(none)* |
+
+## Editing and Removing Keybinds
+
+Every entry in the keybinds list has two action icons on the right:
+
+- **Pencil icon** — opens the keybind back in the editor so you can change the action or the key combination.
+- **Trash icon** — deletes the keybind immediately. There's no confirmation prompt, so use it deliberately.
+
+You can also temporarily disable a keybind without deleting it by clicking the toggle switch to the left of the entry.
+
+## Conflict Detection
+
+When you record a key combination that already belongs to a built-in Discord shortcut, Illegalcord highlights the conflict and shows you which action currently owns that shortcut. You have three options:
+
+- **Reassign** — keep your new binding and let Illegalcord override the Discord default.
+- **Change shortcut** — pick a different key combination for your new keybind.
+- **Cancel** — discard the new keybind and leave everything as-is.
+
+<Note>
+  Illegalcord only detects conflicts with Discord's own shortcuts. It does not scan for conflicts with OS-level or third-party application shortcuts.
+</Note>
+
+## Global Keybinds
+
+Marking a keybind as **Global** registers it at the operating system level, so it fires even when Discord is minimized or running in the background. This is useful for push-to-talk alternatives, quick mute toggles, or any action you want available system-wide.
+
+<Tabs>
+  <Tab title="Windows">
+    Global keybinds work on Windows without any extra configuration. Illegalcord registers the shortcut through the standard Windows hotkey API when you save the keybind.
+  </Tab>
+  <Tab title="macOS">
+    macOS requires Illegalcord (or the Electron shell it runs in) to have **Accessibility** permissions before global keybinds can be registered. If a global keybind isn't firing, open **System Settings → Privacy & Security → Accessibility** and confirm that Discord (or your Illegalcord wrapper app) is listed and checked.
+
+    <Tip>
+      After granting Accessibility permissions on macOS, restart Discord fully for the change to take effect.
+    </Tip>
+  </Tab>
+  <Tab title="Linux">
+    Global keybind support on Linux depends on your desktop environment and whether you're running under X11 or Wayland. X11 generally works without extra steps. Wayland restricts global hotkey registration by design — if your shortcuts aren't firing, check whether your compositor supports the `zwp_keyboard_shortcuts_inhibit_manager_v1` protocol or consider using an X11 compatibility layer.
+  </Tab>
+</Tabs>
+
+<Tip>
+  Keep global keybinds to a small, memorable set. Registering too many system-wide shortcuts can produce unexpected conflicts with other applications running in the background.
+</Tip>

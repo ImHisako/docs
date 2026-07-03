@@ -1,0 +1,80 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Illegalcord",
+  "theme": "almond",
+  "colors": {
+    "primary": "#ef7025",
+    "light": "#eec9bc",
+    "dark": "#4fa1ab"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "customization/themes",
+              "customization/plugins",
+              "customization/settings"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/overview",
+              "features/message-tweaks",
+              "features/privacy",
+              "features/keybinds"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/faq",
+              "troubleshooting/common-issues",
+              "troubleshooting/uninstall"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Plugin Dev",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "plugin-dev/overview",
+              "plugin-dev/getting-started"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "plugin-dev/api/modules",
+              "plugin-dev/api/events",
+              "plugin-dev/api/components"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "plugin-dev/guides/first-plugin",
+              "plugin-dev/guides/publishing"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

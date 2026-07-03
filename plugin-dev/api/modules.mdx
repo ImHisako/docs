@@ -1,0 +1,155 @@
+---
+title: "Illegalcord Plugin API: Webpack Modules and Patcher"
+sidebarTitle: "Modules"
+description: "Learn how to find Discord Webpack modules with findModule, findByProps, and findByDisplayName, then patch them using the Illegalcord Patcher API."
+---
+
+Discord bundles all of its source code into a Webpack bundle at runtime. Illegalcord exposes a set of utilities that let you locate and interact with these internal modules — and patch their methods — without ever touching Discord's build pipeline directly.
+
+## Finding Modules
+
+Illegalcord provides three main functions for locating Webpack modules. Each targets a different way of identifying the module you need.
+
+### `findModule(filter)`
+
+`findModule` accepts a filter function and returns the first Webpack module for which that function returns `true`. Use this when you need fine-grained control over what you match.
+
+```typescript
+import { findModule } from "@illegalcord/api";
+
+const MessageStore = findModule(m => m.getMessage && m.getMessages);
+```
+
+<ParamField path="filter" type="(module: any) => boolean" required>
+  A predicate function that receives each module and returns `true` when a match is found.
+</ParamField>
+
+### `findByProps(...props)`
+
+`findByProps` returns the first module that contains **all** of the provided property names. This is the most common way to find stores and action modules, since their method names tend to be stable.
+
+```typescript
+import { findByProps } from "@illegalcord/api";
+
+const ChannelStore = findByProps("getChannel", "getDMFromUserId");
+```
+
+<ParamField path="props" type="string[]" required>
+  One or more property name strings. The returned module will have every property you specify.
+</ParamField>
+
+### `findByDisplayName(name)`
+
+`findByDisplayName` finds a React component whose `displayName` matches the provided string. Use this when you want to patch or wrap a specific UI component.
+
+```typescript
+import { findByDisplayName } from "@illegalcord/api";
+
+const UserBadge = findByDisplayName("UserBadge");
+```
+
+<ParamField path="name" type="string" required>
+  The exact string value of the component's `displayName` property.
+</ParamField>
+
+<Warning>
+  Module property names and component `displayName` values can change between Discord updates. Write your filters defensively — check for the combination of properties that uniquely identifies the module rather than relying on a single name.
+</Warning>
+
+---
+
+## Patching Modules
+
+Once you have a module, the **Patcher API** lets you monkey-patch its methods without replacing them outright. Every patch is scoped to a plugin name so Illegalcord can clean it up precisely.
+
+### Patch types
+
+<ParamField path="Patcher.before(pluginName, module, method, callback)" type="function">
+  Runs your `callback` **before** the original method executes. You can inspect or mutate the arguments array in place.
+</ParamField>
+
+<ParamField path="Patcher.after(pluginName, module, method, callback)" type="function">
+  Runs your `callback` **after** the original method executes. Receives the return value as the last argument so you can inspect or replace it.
+</ParamField>
+
+<ParamField path="Patcher.instead(pluginName, module, method, callback)" type="function">
+  **Replaces** the original method entirely. Your callback receives `(thisObj, args, original)` — call `original(...args)` if you still want the default behavior to run.
+</ParamField>
+
+### Example: intercepting outgoing messages
+
+```typescript
+import { Patcher, findByProps } from "@illegalcord/api";
+
+const MessageActions = findByProps("sendMessage");
+
+// Intercept outgoing messages
+Patcher.before("MyPlugin", MessageActions, "sendMessage", (thisObj, args) => {
+  const [channelId, message] = args;
+  console.log(`Sending to ${channelId}:`, message.content);
+});
+```
+
+### Removing patches
+
+Call `Patcher.unpatchAll` inside your plugin's `stop()` method to remove every patch your plugin has registered. Failing to do this leaves orphaned patches active even after the plugin is disabled.
+
+```typescript
+import { Patcher } from "@illegalcord/api";
+
+// Inside your plugin's stop() method:
+Patcher.unpatchAll("MyPlugin");
+```
+
+<ParamField path="pluginName" type="string" required>
+  The same plugin name string you passed as the first argument to every `Patcher.before`, `Patcher.after`, or `Patcher.instead` call.
+</ParamField>
+
+<Tip>
+  Keep your plugin name consistent across all `Patcher.*` calls. A single `Patcher.unpatchAll("MyPlugin")` in `stop()` will cleanly remove every patch that shares that name, no matter how many you registered.
+</Tip>
+
+---
+
+## Full example
+
+The steps below walk through a complete module-finding and patching workflow.
+
+<Steps>
+  <Step title="Find the module">
+    Use `findByProps` to locate the module that owns the method you want to patch.
+
+    ```typescript
+    import { findByProps } from "@illegalcord/api";
+
+    const MessageActions = findByProps("sendMessage");
+    ```
+  </Step>
+  <Step title="Register a patch in start()">
+    Apply your patch inside `start()` so it activates the moment your plugin is enabled.
+
+    ```typescript
+    import { Patcher } from "@illegalcord/api";
+
+    start() {
+      Patcher.before("MyPlugin", MessageActions, "sendMessage", (thisObj, args) => {
+        const [channelId, message] = args;
+        console.log(`Sending to ${channelId}:`, message.content);
+      });
+    }
+    ```
+  </Step>
+  <Step title="Clean up in stop()">
+    Remove all patches when your plugin stops to prevent stale behavior.
+
+    ```typescript
+    stop() {
+      Patcher.unpatchAll("MyPlugin");
+    }
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  `findModule`, `findByProps`, and `findByDisplayName` all return `undefined` if no match is found. Guard against this with a null check before calling any method on the result, especially in plugins that target optional Discord features.
+</Note>

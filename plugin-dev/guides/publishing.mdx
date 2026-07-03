@@ -1,0 +1,153 @@
+---
+title: "Publish and Share Your Illegalcord Plugin with Others"
+sidebarTitle: "Publishing"
+description: "Learn to share your Illegalcord plugin via a GitHub URL or submit it to the official plugin repository, where every user can discover and install it."
+---
+
+Once your plugin is working and tested, you can share it with the broader Illegalcord community. There are two paths available: a quick share via a direct GitHub URL, or a formal submission to the official Illegalcord plugin repository where your plugin appears in the in-app browser for everyone to discover and install.
+
+## Option 1: Share via GitHub URL
+
+The fastest way to distribute your plugin is to push it to a public GitHub repository and hand out the raw file URL. Users can install it without any extra tooling.
+
+1. Push your `PrefixAdder/` folder to a public GitHub repository.
+2. Navigate to your `index.ts` file on GitHub and click **Raw** to get the raw file URL. It looks like:
+
+   ```bash
+   https://raw.githubusercontent.com/YourName/PrefixAdder/main/index.ts
+   ```
+
+3. Tell users to open Discord → **Settings → Illegalcord → Plugins → Install from URL** and paste the raw URL.
+
+<Tip>
+  Create a **GitHub Release** and point users to the raw URL from that tagged commit rather than the `main` branch. This gives users a stable version that won't break if you push work-in-progress changes.
+</Tip>
+
+## Option 2: Submit to the Illegalcord Plugin Repository
+
+The official plugin repository at [`https://github.com/illegalcord/plugins`](https://github.com/illegalcord/plugins) powers the in-app plugin browser. Once your plugin is merged, every Illegalcord user can find, install, and auto-update it directly from Discord.
+
+### Required files checklist
+
+Make sure your plugin folder contains all of the following before opening a pull request:
+
+| File | Required | Purpose |
+|---|---|---|
+| `index.ts` | ✅ Yes | Main plugin source code |
+| `manifest.json` | ✅ Yes | Name, description, version, authors |
+| `README.md` | ✅ Yes | What the plugin does and how to use it |
+| `settings-screenshot.png` | Optional | Preview image for the store listing |
+
+### Submission steps
+
+<Steps>
+  <Step title="Fork the plugin repository">
+    Go to [`https://github.com/illegalcord/plugins`](https://github.com/illegalcord/plugins) and click **Fork** to create a copy under your GitHub account.
+
+    Then clone your fork locally:
+
+    ```bash
+    git clone https://github.com/YourName/plugins.git
+    cd plugins
+    ```
+  </Step>
+
+  <Step title="Add your plugin folder">
+    Copy your plugin directory into the `/plugins/` folder of the repo, naming it after your plugin:
+
+    ```bash
+    cp -r ~/dev/PrefixAdder plugins/PrefixAdder
+    ```
+
+    Your folder structure should look like this:
+
+    ```bash
+    plugins/
+    └── PrefixAdder/
+        ├── index.ts
+        ├── manifest.json
+        └── README.md
+    ```
+  </Step>
+
+  <Step title="Verify your manifest.json">
+    Open `manifest.json` and confirm every required field is present and accurate:
+
+    ```json manifest.json
+    {
+      "name": "PrefixAdder",
+      "description": "Prepends a custom prefix to every message you send",
+      "version": "1.0.0",
+      "authors": [
+        { "name": "YourName" }
+      ]
+    }
+    ```
+
+    The `description` field is displayed verbatim in the plugin browser, so make it clear and concise.
+  </Step>
+
+  <Step title="Write your README.md">
+    Add a `README.md` that explains what PrefixAdder does and how to configure it. Keep it brief but complete:
+
+    ```markdown README.md
+    # PrefixAdder
+
+    Prepends a custom text prefix to every message you send in Discord.
+
+    ## Usage
+
+    1. Enable the plugin in **Settings → Illegalcord → Plugins**.
+    2. Click the gear icon to open settings.
+    3. Enter your desired prefix text.
+    4. Send a message — it will appear with the prefix prepended.
+
+    ## Settings
+
+    | Setting | Default | Description |
+    |---|---|---|
+    | Prefix | `[Illegalcord] ` | Text prepended to each message |
+    | Enabled | `true` | Toggle the prefix on or off |
+    ```
+  </Step>
+
+  <Step title="Commit and open a pull request">
+    Stage your new folder, commit, and push to your fork:
+
+    ```bash
+    git add plugins/PrefixAdder
+    git commit -m "feat: add PrefixAdder plugin"
+    git push origin main
+    ```
+
+    Then go to the original `illegalcord/plugins` repository on GitHub, click **Pull Requests → New pull request**, and select your fork and branch. Fill in the PR template — describe what your plugin does and link any relevant issues.
+
+    Maintainers will review your submission and request changes if needed. Once approved, your plugin is merged and appears in the in-app browser automatically.
+  </Step>
+</Steps>
+
+## Plugin metadata best practices
+
+Follow these conventions to give your plugin the best chance of being approved and discovered:
+
+- **Use semantic versioning.** Increment the version as `1.0.0` → `1.1.0` (new feature) → `1.1.1` (bug fix). Never reuse a version number.
+- **Write a clear, specific description.** Avoid vague descriptions like "makes Discord better." Say exactly what the plugin does.
+- **List all authors.** If someone contributed code, add them to the `authors` array in `manifest.json`.
+- **Tag with relevant categories** if the repository's submission template asks for them. This improves discoverability in the in-app browser.
+
+## Updating a published plugin
+
+Keeping your plugin up to date is simple:
+
+1. Make your changes in `index.ts` (or other files).
+2. Bump the `version` field in `manifest.json` following semantic versioning.
+3. Push a new commit to your fork and open a PR to the `illegalcord/plugins` repo (or push directly if you're a repo contributor).
+4. Once merged, Illegalcord automatically notifies users and applies the update in the background.
+
+<Info>
+  Users who installed your plugin via **Install from URL** will not receive automatic updates — they need to reinstall from the updated URL. Submitting to the official repository is the recommended path for long-term maintenance.
+</Info>
+
+<Warning>
+  All plugins submitted to the official repository are reviewed for safety before merging. Do not submit plugins that harvest authentication tokens, log passwords or private messages, exfiltrate user data, or otherwise violate user privacy. Such submissions will be permanently rejected and may result in a ban from the repository.
+</Warning>

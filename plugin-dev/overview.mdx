@@ -1,0 +1,107 @@
+---
+title: "Plugin Development for Illegalcord: System Overview"
+sidebarTitle: "Overview"
+description: "Learn how the Illegalcord plugin system works, what plugins can do, and what you need to start building your own Discord client plugins."
+---
+
+Illegalcord exposes a powerful JavaScript and TypeScript API that lets you reach directly into Discord's client-side internals — patching functions, swapping out React components, reacting to events, and surfacing your own settings UI — all without touching Discord's source code. If you can write JavaScript, you can build a plugin.
+
+## What the plugin system is
+
+The Illegalcord plugin system is a sandboxed runtime that sits on top of Discord's bundled Webpack modules. At load time, Illegalcord injects your plugin code into the client, giving you controlled access to Discord's internal module registry, its React component tree, and its event bus. Plugins are loaded and unloaded dynamically, so users can toggle them on or off without restarting the client.
+
+## What plugins can do
+
+Illegalcord plugins are not limited to cosmetic tweaks. Because they run inside the same JavaScript context as Discord, they can interact with almost every layer of the client.
+
+<CardGroup cols={2}>
+  <Card title="Webpack Module Patching" icon="puzzle-piece">
+    Intercept any module from Discord's internal Webpack registry and read, replace, or augment its exports at runtime.
+  </Card>
+  <Card title="React Component Injection" icon="code">
+    Add brand-new React components to Discord's UI or replace existing ones using Illegalcord's component patch helpers.
+  </Card>
+  <Card title="Discord Event Listeners" icon="bell">
+    Subscribe to Discord's internal flux dispatcher events — message creates, guild joins, voice state changes, and more.
+  </Card>
+  <Card title="Settings UI" icon="sliders">
+    Register a settings panel for your plugin using the Settings API so users can configure it directly inside Illegalcord's settings screen.
+  </Card>
+  <Card title="Toasts & Modals" icon="window-restore">
+    Show native-feeling toasts for quick feedback or open full modal dialogs using Illegalcord's built-in UI helpers.
+  </Card>
+  <Card title="Function Patching (Monkey-Patching)" icon="wrench">
+    Wrap or replace any JavaScript function in Discord's codebase using `before`, `after`, and `instead` patch hooks.
+  </Card>
+</CardGroup>
+
+## Plugin anatomy
+
+Every Illegalcord plugin is built around a single `definePlugin()` call exported from the plugin's entry point. This call tells Illegalcord the plugin's identity and wires up its lifecycle hooks.
+
+```typescript
+import { definePlugin } from "@illegalcord/api";
+
+export default definePlugin({
+  name: "MyPlugin",
+  description: "A short description of what this plugin does.",
+  authors: [{ name: "YourName", id: "your-discord-id" }],
+
+  start() {
+    // Called when the plugin is enabled.
+    // Register patches, event listeners, and settings here.
+  },
+
+  stop() {
+    // Called when the plugin is disabled.
+    // Undo anything you set up in start().
+  },
+});
+```
+
+The three required fields are `name`, `description`, and `authors`. The `start()` and `stop()` lifecycle methods are optional but recommended — `start()` runs when your plugin is activated, and `stop()` runs when it is deactivated, giving you a clean place to set up and tear down side effects.
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Language | JavaScript or TypeScript (TypeScript strongly recommended) |
+| UI framework | React (same version Discord ships) |
+| Module access | Webpack module patching via Illegalcord's `findModule` / `findByProps` APIs |
+| Build tooling | esbuild (bundled into the Illegalcord dev toolchain) |
+
+<Info>
+  Illegalcord ships TypeScript type definitions for its entire public API. Using TypeScript gives you autocomplete, inline documentation, and compile-time safety — all of which make plugin development significantly faster.
+</Info>
+
+## Prerequisites
+
+Before you write your first plugin, make sure you have the following in place:
+
+- **Node.js 18 or later** — required for the build toolchain and package management.
+- **Basic JavaScript or TypeScript knowledge** — you should be comfortable with ES modules, arrow functions, and `async/await`.
+- **Familiarity with React** — not strictly required for simple patches, but essential for any plugin that adds or modifies UI components.
+- **Discord installed with Illegalcord** — you need a running Illegalcord client to load and test your plugin.
+
+<Note>
+  You do not need to understand Webpack internals deeply to get started. Illegalcord's helper functions abstract away the low-level module resolution, so you can focus on what your plugin actually does.
+</Note>
+
+## Next steps
+
+Ready to write code? Head to the setup guide to configure your local environment, then work through the first plugin walkthrough to ship something real.
+
+<CardGroup cols={2}>
+  <Card title="Dev Setup" icon="gear" href="/plugin-dev/getting-started">
+    Configure your local environment and enable hot reload for fast iteration.
+  </Card>
+  <Card title="Your First Plugin" icon="rocket" href="/plugin-dev/guides/first-plugin">
+    Build a working plugin from scratch — step by step.
+  </Card>
+  <Card title="API Modules" icon="book" href="/plugin-dev/api/modules">
+    Browse every module Illegalcord exposes: finders, patchers, settings, and more.
+  </Card>
+  <Card title="Events Reference" icon="list" href="/plugin-dev/api/events">
+    Full index of Discord flux events your plugin can subscribe to.
+  </Card>
+</CardGroup>

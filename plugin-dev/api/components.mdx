@@ -1,251 +1,111 @@
 ---
-title: "Illegalcord Plugin API: Settings, Toasts, and Modals"
+title: "Settings and UI"
 sidebarTitle: "Components"
-description: "Use definePluginSettings, showToast, and openModal to build settings panels, surface feedback, and open modals in your Illegalcord plugin."
+description: "Use settings schemas, Discord UI components, toasts, modals, and ErrorBoundary in Illegalcord plugins."
 ---
 
-Illegalcord gives your plugin a first-class UI layer: a declarative settings schema that auto-generates a settings panel, toast notifications for surfacing quick feedback, and a modal API for richer interactions. You don't need to build any of this from scratch — import the utilities, describe what you need, and Illegalcord handles the rendering.
+Illegalcord plugins should reuse the UI and helper APIs already exposed by the project. Avoid hand-rolled controls when Discord or the local component library already provides one.
 
-## Plugin Settings
+## Settings
 
-### `definePluginSettings(schema)`
-
-Pass a schema object to `definePluginSettings` and Illegalcord automatically generates a settings UI for your plugin under **Settings → Plugins → Your Plugin**. The returned object exposes a `.store` property you use to read and write values at runtime.
+Use `definePluginSettings` from `@api/Settings` and `OptionType` from `@utils/types`.
 
 ```typescript
-import { definePluginSettings } from "@illegalcord/api";
+import { definePluginSettings } from "@api/Settings";
+import { OptionType } from "@utils/types";
 
 const settings = definePluginSettings({
-  enabled: {
-    type: "boolean",
-    description: "Enable the feature",
-    default: true,
-  },
-  prefix: {
-    type: "string",
-    description: "Command prefix",
-    default: "!",
-  },
-});
-
-// Read a setting anywhere in your plugin
-console.log(settings.store.prefix);
-```
-
-<ParamField path="schema" type="Record<string, SettingDefinition>" required>
-  An object where each key becomes a setting. Each value is a setting definition with at minimum a `type`, `description`, and `default`.
-</ParamField>
-
-### Setting types
-
-Each entry in the schema must specify a `type` that controls which input Illegalcord renders.
-
-| Type | Rendered control | Notes |
-|------|-----------------|-------|
-| `boolean` | Toggle switch | `default` must be `true` or `false`. |
-| `string` | Text input | `default` must be a string. |
-| `number` | Number input | `default` must be a number. |
-| `select` | Dropdown | Provide an `options` array of `{ label, value }` objects. |
-| `slider` | Numeric slider | Provide `min` and `max` numeric values alongside `default`. |
-
-```typescript
-import { definePluginSettings } from "@illegalcord/api";
-
-const settings = definePluginSettings({
-  volume: {
-    type: "slider",
-    description: "Notification volume",
-    default: 50,
-    min: 0,
-    max: 100,
-  },
-  theme: {
-    type: "select",
-    description: "Color theme",
-    default: "dark",
-    options: [
-      { label: "Dark", value: "dark" },
-      { label: "Light", value: "light" },
-      { label: "System", value: "system" },
-    ],
-  },
+    enabled: {
+        type: OptionType.BOOLEAN,
+        description: "Enable the feature.",
+        default: true
+    },
+    label: {
+        type: OptionType.STRING,
+        description: "Text shown by the feature.",
+        default: "Hello"
+    }
 });
 ```
 
-<Note>
-  Settings are persisted automatically by Illegalcord. You never need to manually read from or write to localStorage — just access `settings.store.<key>` and assign to it directly.
-</Note>
-
----
-
-## Toast Notifications
-
-### `showToast(message, type?)`
-
-Display a brief, non-blocking notification at the bottom of the Discord window. Toasts dismiss themselves automatically after a short delay.
+Read settings in runtime code with `settings.store`. In React components, subscribe only to the keys you need:
 
 ```typescript
-import { showToast, ToastType } from "@illegalcord/api";
+const KEYS = ["enabled", "label"] as const;
 
-showToast("Plugin activated!", ToastType.SUCCESS);
-showToast("Something went wrong", ToastType.FAILURE);
+function SettingsPreview() {
+    const values = settings.use(KEYS);
+    return <span>{values.enabled ? values.label : "Disabled"}</span>;
+}
 ```
 
-<ParamField path="message" type="string" required>
-  The text to display inside the toast.
-</ParamField>
+## Toasts
 
-<ParamField path="type" type="ToastType" required={false}>
-  Controls the toast's visual style. Defaults to `ToastType.MESSAGE` when omitted.
-</ParamField>
+Use Discord's toast helpers from `@webpack/common`:
 
-### Toast types
+```typescript
+import { showToast, Toasts } from "@webpack/common";
 
-<CodeGroup>
-```typescript SUCCESS
-showToast("Settings saved.", ToastType.SUCCESS);
+showToast("Settings saved.", Toasts.Type.SUCCESS);
+showToast("Could not save settings.", Toasts.Type.FAILURE);
 ```
-```typescript FAILURE
-showToast("Could not connect.", ToastType.FAILURE);
-```
-```typescript MESSAGE
-showToast("New update available.", ToastType.MESSAGE);
-```
-```typescript CUSTOM
-showToast("Custom styled alert.", ToastType.CUSTOM);
-```
-</CodeGroup>
-
-| Type | Appearance |
-|------|------------|
-| `SUCCESS` | Green — use for confirmations and completed actions. |
-| `FAILURE` | Red — use for errors and failed operations. |
-| `MESSAGE` | Neutral — use for informational alerts. |
-| `CUSTOM` | No default color — pair with a custom `className` for full control. |
-
----
 
 ## Modals
 
-### `openModal(render)`
+Use modal helpers from `@utils/modal` and Discord or local components for controls.
 
-Open a full modal overlay rendered by your plugin. You provide a render function that receives modal props (including the `onClose` callback) and returns a JSX element built from Illegalcord's modal primitives.
+```tsx
+import { ModalContent, ModalHeader, ModalRoot, openModal } from "@utils/modal";
+import { Button, Text } from "@webpack/common";
 
-```typescript
-import { openModal, ModalRoot, ModalHeader, ModalContent } from "@illegalcord/api";
-
-openModal(props => (
-  <ModalRoot {...props}>
-    <ModalHeader>My Plugin</ModalHeader>
-    <ModalContent>
-      <p>Hello from my plugin modal!</p>
-    </ModalContent>
-  </ModalRoot>
-));
-```
-
-<ParamField path="render" type="(props: ModalProps) => JSX.Element" required>
-  A function that receives modal lifecycle props and returns a JSX element. Always spread `{...props}` onto `<ModalRoot>` so Illegalcord can control open/close animation and focus trapping.
-</ParamField>
-
-### Modal primitives
-
-| Component | Purpose |
-|-----------|---------|
-| `ModalRoot` | The outermost container. Always receives `{...props}`. |
-| `ModalHeader` | Renders the title bar area at the top of the modal. |
-| `ModalContent` | Scrollable body area for your main content. |
-| `ModalFooter` | Optional bottom bar, typically used for action buttons. |
-| `ModalCloseButton` | A pre-styled close button. Place inside `ModalHeader`. |
-
-```jsx
-import {
-  openModal,
-  ModalRoot,
-  ModalHeader,
-  ModalContent,
-  ModalFooter,
-  ModalCloseButton,
-  Button,
-} from "@illegalcord/api";
-
-openModal(props => (
-  <ModalRoot {...props}>
-    <ModalHeader>
-      Confirm Action
-      <ModalCloseButton onClick={props.onClose} />
-    </ModalHeader>
-    <ModalContent>
-      <p>Are you sure you want to continue?</p>
-    </ModalContent>
-    <ModalFooter>
-      <Button onClick={props.onClose}>Cancel</Button>
-      <Button color={Button.Colors.RED} onClick={() => {
-        doTheAction();
-        props.onClose();
-      }}>
-        Confirm
-      </Button>
-    </ModalFooter>
-  </ModalRoot>
-));
-```
-
-<Note>
-  React and JSX are available in every Illegalcord plugin context without an explicit import. You do not need to add `import React from "react"` at the top of your plugin file.
-</Note>
-
----
-
-## Putting it all together
-
-The steps below show how to wire settings, toasts, and a modal into a single cohesive plugin flow.
-
-<Steps>
-  <Step title="Define your settings schema">
-    Call `definePluginSettings` at module level and export the result so your plugin methods can access it.
-
-    ```typescript
-    import { definePluginSettings } from "@illegalcord/api";
-
-    export const settings = definePluginSettings({
-      greeting: {
-        type: "string",
-        description: "Text to show in the modal",
-        default: "Hello, world!",
-      },
-    });
-    ```
-  </Step>
-  <Step title="Open a modal that reads from settings">
-    Use `settings.store` inside your render function to pull in the current value.
-
-    ```typescript
-    import { openModal, ModalRoot, ModalHeader, ModalContent } from "@illegalcord/api";
-
-    function openGreetingModal() {
-      openModal(props => (
+function openExampleModal() {
+    openModal(props => (
         <ModalRoot {...props}>
-          <ModalHeader>Greeting</ModalHeader>
-          <ModalContent>
-            <p>{settings.store.greeting}</p>
-          </ModalContent>
+            <ModalHeader>Example</ModalHeader>
+            <ModalContent>
+                <Text variant="text-md/normal">Hello from a plugin modal.</Text>
+                <Button onClick={props.onClose}>Close</Button>
+            </ModalContent>
         </ModalRoot>
-      ));
+    ));
+}
+```
+
+## Injected React components
+
+Wrap injected render functions with `ErrorBoundary.wrap`.
+
+```tsx
+import ErrorBoundary from "@components/ErrorBoundary";
+import { EquicordDevs } from "@utils/constants";
+import definePlugin from "@utils/types";
+
+function ExampleDecoration() {
+    return <span>Example</span>;
+}
+
+export default definePlugin({
+    name: "DecorationExample",
+    description: "Shows an injected decoration example.",
+    authors: [EquicordDevs.irritably],
+
+    renderMessageDecoration: {
+        render: ErrorBoundary.wrap(ExampleDecoration, { noop: true })
     }
-    ```
-  </Step>
-  <Step title="Confirm the action with a toast">
-    Fire a `SUCCESS` toast after the user interacts so they get immediate feedback.
+});
+```
 
-    ```typescript
-    import { showToast, ToastType } from "@illegalcord/api";
+## UI imports
 
-    showToast("Modal opened!", ToastType.SUCCESS);
-    ```
-  </Step>
-</Steps>
+| Need | Prefer |
+|---|---|
+| React and hooks | `@webpack/common` |
+| Button, input, select, checkbox, slider, tooltip | `@webpack/common` or existing `@components/*` wrappers |
+| Modal primitives | `@utils/modal` |
+| Settings cards and tabs | `@components/settings` |
+| Class name factory | `classNameFactory` from `@utils/css` |
+| Class merging | `classes` from `@utils/misc` |
 
-<Tip>
-  Test your settings UI by enabling **Developer Mode** in Discord's appearance settings, then toggling your plugin off and back on. Illegalcord reloads your plugin fresh each time, so you'll see setting defaults and UI re-renders exactly as a new user would.
-</Tip>
+<Warning>
+  Do not import React from `react` in plugin UI. Use React and hooks from `@webpack/common`.
+</Warning>

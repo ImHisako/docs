@@ -1,55 +1,42 @@
-# Mintlify Starter Kit
+# Illegalcord Website
 
-Use the starter kit to get your docs deployed and ready to customize.
+This folder contains the Mintlify documentation site for Illegalcord.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+The website is intentionally separate from the client build. It has its own `docs.json` and MDX pages, while the Illegalcord source continues to build from the repository root with `pnpm`.
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+The site links to:
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+- Illegalcord source code: https://github.com/ImHisako/Illegalcord
+- Illegalcord installer: https://github.com/ImHisako/IllegalcordInstaller
 
-## AI-assisted writing
+## Local preview
 
-Set up your AI coding tool to work with Mintlify:
+From the repository root:
 
 ```bash
-npx skills add https://mintlify.com/docs
+cd "Illegalcord Website"
+npx mintlify dev
 ```
 
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
+Mintlify serves the docs at `http://localhost:3000`.
 
-See the [AI tools guides](/ai-tools) for tool-specific setup.
+## Structure
 
-## Development
+- `docs.json` configures the theme, logo, colors, and navigation.
+- `index.mdx` is the landing page.
+- `source-structure.mdx` maps the docs to the Illegalcord repository layout.
+- `customization/` documents settings, plugins, and themes.
+- `features/` documents user-facing capabilities backed by the local source.
+- `plugin-dev/` documents how to build plugins inside this codebase.
+- `troubleshooting/` covers build, inject, update, and uninstall recovery.
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+## Source alignment
 
-```
-npm i -g mint
-```
+When updating these docs, prefer commands and APIs that exist in the local repository:
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
-mint dev
-```
-
-View your local preview at `http://localhost:3000`.
-
-## Publishing changes
-
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
-
-## Need help?
-
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- `src/plugins` for stock Vencord plugins.
+- `src/equicordplugins` for Equicord-specific plugins.
+- `src/userplugins` for Illegalcord-specific bundled plugins.
+- `src/api`, `src/components`, `src/utils`, and `src/webpack` for shared plugin APIs.
+- `browser` for web extension and userscript entry points.
+- `scripts` for build, installer, lint, and plugin metadata generation.

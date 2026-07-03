@@ -1,74 +1,51 @@
 ---
-title: "Quickstart: Themes, Plugins, and Keybinds in Illegalcord"
-sidebarTitle: "Quick Start"
-description: "Apply your first theme, enable a plugin, and configure a keybind in Illegalcord. Get personalized and fully set up in under five minutes."
+title: "Quickstart"
+sidebarTitle: "Quickstart"
+description: "A short first-run guide for Illegalcord settings, plugins, themes, updates, and backups."
 ---
 
-Once Illegalcord is installed, you're ready to make Discord your own. This guide walks you through the essential steps — applying a theme, enabling a plugin, setting up a keybind, and making sure everything stays up to date. You can complete the whole walkthrough in under five minutes.
-
-<Note>
-  All changes you make in the Illegalcord settings panel are saved automatically. There is no save button — just configure and go.
-</Note>
+After you build and inject Illegalcord, use this walkthrough to confirm that the client is loaded and configure the basics.
 
 <Steps>
   <Step title="Open Illegalcord Settings">
-    Click the **gear icon** (⚙️) in the bottom-left corner of Discord to open User Settings. Scroll past the standard Discord settings categories until you reach the **Illegalcord** section near the bottom of the sidebar. This section is your control center for everything Illegalcord offers.
+    Open Discord User Settings. Find the **Illegalcord Settings** section added by the required `Settings` plugin.
   </Step>
-
-  <Step title="Apply a Theme">
-    Click the **Themes** tab inside the Illegalcord section.
-
-    1. Click **Browse Themes** to open the community theme directory.
-    2. Preview themes by hovering over them — Discord's interface updates in real time.
-    3. When you find one you like, click **Install**, then toggle it on with the switch next to its name.
-
-    You can install multiple themes and switch between them at any time. Only one theme is active at once unless you manually combine CSS.
-
-    For a deeper look at creating and customizing themes, see the [Themes](/customization/themes) guide.
+  <Step title="Check the main tab">
+    Open **Illegalcord**. Use quick actions for **Notification Log**, **Edit QuickCSS**, **Relaunch Discord**, **Open Settings Folder**, and **View Source Code** when they are available for your build target.
   </Step>
-
-  <Step title="Enable a Plugin">
-    Click the **Plugins** tab inside the Illegalcord section.
-
-    1. Use the search bar at the top to find a plugin by name or keyword.
-    2. Click a plugin card to read its description, permissions, and author information.
-    3. Toggle the switch on the right side of the plugin card to **enable** it. Some plugins show a small gear icon for additional settings — click it to configure them.
-
-    <Tip>
-      Not sure where to start? Here are three popular first plugins to try:
-
-      - **BetterRoleColors** — applies server role colors to usernames throughout the entire UI, not just in the member list.
-      - **MessageLogger** — keeps a local record of deleted and edited messages so you never miss what was said.
-      - **SpotifyControls** — adds Spotify playback controls (play, pause, skip, volume) directly into the Discord bottom bar.
-    </Tip>
-
-    Explore the full plugin catalog and learn how to build your own in the [Plugins](/customization/plugins) guide.
+  <Step title="Enable a plugin">
+    Open **Plugins**. Search by name, description, acronym, tag, or type. The filter can show stock plugins, Equicord plugins, Illegalcord plugins, enabled plugins, disabled plugins, new plugins, and API plugins.
   </Step>
-
-  <Step title="Set Up a Keybind">
-    Click the **Keybinds** tab inside the Illegalcord section.
-
-    1. Click **Add Keybind** to open the keybind editor.
-    2. Choose an **action** from the dropdown — for example, "Toggle Mute", "Run Plugin Command", or "Switch to Server".
-    3. Click **Record Keybind** and press the key combination you want to assign.
-    4. Click **Save**. The keybind is active immediately.
-
-    You can add as many keybinds as you need and edit or delete them at any time from the same tab.
+  <Step title="Edit QuickCSS or add a theme">
+    Open **Themes**. Use QuickCSS for small local CSS changes, or add theme files and theme links depending on your target.
   </Step>
-
-  <Step title="Check for Updates">
-    Click the **About** tab inside the Illegalcord section to see your current Illegalcord version and the version of Discord it's patched against.
-
-    - If an update is available, an **Update Illegalcord** button appears at the top of the page. Click it to download and apply the latest release without leaving Discord.
-    - If you're already on the latest version, the page displays a green **Up to date** badge.
-
-    Illegalcord also checks for updates automatically every time Discord launches, so this step is usually just for peace of mind.
+  <Step title="Back up your configuration">
+    Open **Backup & Restore**. Export all settings, plugin settings, QuickCSS, or DataStore data before testing large changes.
   </Step>
 </Steps>
 
-## What's Next?
+## First plugin ideas
 
-You've covered the essentials — now dive deeper into what Illegalcord can do:
+Try small, reversible plugins before enabling a large stack:
 
-- **[Themes](/customization/themes)** — learn how to write your own CSS, import external theme files, and layer multiple stylesheets.
-- **[Plugins](/customization/plugins)** — explore the full plugin API, browse the community registry, and build your own plugins.
+| Goal | Where to look |
+|---|---|
+| Improve message controls | Search tags such as `Chat`, `Utility`, or `Shortcuts`. |
+| Improve privacy behavior | Search the `Privacy` tag and review each plugin description. |
+| Improve voice or media | Search `Voice`, `Media`, or known plugin names such as `VolumeBooster`. |
+| Improve development workflow | Search `Developers`, `Console`, or enable Patch Helper in a non-standalone build. |
+
+<Tip>
+  Plugins with Webpack patches may require a restart when toggled. The Plugins tab shows a restart prompt when a change cannot be applied live.
+</Tip>
+
+## Recommended safety loop
+
+1. Export a backup from **Backup & Restore**.
+2. Enable one plugin or theme at a time.
+3. Restart Discord if the UI asks for it.
+4. If something breaks, disable the last change or restore your backup.
+
+<Note>
+  Illegalcord settings are local to your client unless you explicitly enable cloud sync.
+</Note>

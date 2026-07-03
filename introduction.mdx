@@ -1,58 +1,54 @@
 ---
-title: "Illegalcord: A Feature-Rich Discord Client Modification"
+title: "Introduction"
 sidebarTitle: "Introduction"
-description: "Illegalcord enhances Discord with themes, plugins, privacy controls, and quality-of-life features — all client-side, no account changes needed."
+description: "What Illegalcord is, what it inherits from Equicord and Vencord, and how this documentation maps to the local source tree."
 ---
 
-Illegalcord is a client modification that injects directly into your existing Discord installation, unlocking a world of customization that Discord doesn't offer out of the box. From hand-crafted visual themes and powerful plugins to fine-grained privacy controls and programmable keybinds, Illegalcord transforms how you experience Discord — without touching your account, your data, or Discord's servers.
+Illegalcord is a Discord client mod with both an installer project and a source build workflow. It inherits the Vencord plugin architecture through Equicord and adds Illegalcord-specific plugins, settings polish, and local build flows.
 
-## Key Features
+<Button href="https://github.com/ImHisako/Illegalcord">
+  View source code on GitHub
+</Button>
+
+The project is not a separate Discord client. It patches or injects code into Discord's client, then runs plugins, QuickCSS, settings sync, and UI integrations inside Discord's renderer.
+
+## What Illegalcord adds
 
 <CardGroup cols={2}>
-  <Card title="Themes" icon="palette">
-    Apply community-made or custom CSS themes to completely redesign Discord's interface. Switch themes instantly without restarting.
+  <Card title="Large plugin catalog" icon="puzzle-piece">
+    Plugins are compiled from `src/plugins`, `src/equicordplugins`, and `src/userplugins`.
   </Card>
-  <Card title="Plugins" icon="puzzle-piece">
-    Extend Discord's functionality with plugins for message logging, rich presence, role colors, Spotify controls, and much more.
+  <Card title="QuickCSS and themes" icon="paintbrush">
+    QuickCSS, local themes, online theme links, and theme activation settings are stored through the shared settings system.
   </Card>
-  <Card title="Privacy Controls" icon="shield-halved">
-    Block tracking pixels, suppress read receipts, and control exactly what data leaves your client with built-in privacy toggles.
+  <Card title="Desktop and web builds" icon="desktop">
+    Desktop builds use `src/main` and `pnpm inject`; web builds use the `browser` entry points and `pnpm buildWeb`.
   </Card>
-  <Card title="Keybinds" icon="keyboard">
-    Assign custom keyboard shortcuts to any Illegalcord or Discord action — mute, deafen, switch servers, run plugin commands, and beyond.
-  </Card>
-  <Card title="Message Tweaks" icon="message">
-    Edit how messages are displayed, add timestamps, reveal deleted messages, and customize the chat experience to your liking.
-  </Card>
-  <Card title="Auto-Update" icon="arrows-rotate">
-    Illegalcord keeps itself up to date automatically in the background, so you always have the latest features and security patches.
+  <Card title="Developer tooling" icon="wrench">
+    The repo includes linting, TypeScript checks, patch linting, plugin metadata generation, reporter builds, and Patch Helper.
   </Card>
 </CardGroup>
 
-## How It Works
+## Source-backed scope
 
-Illegalcord works by injecting a small loader into the Discord desktop application at launch. This loader runs inside Discord's existing Electron shell, giving Illegalcord access to Discord's internal modules so it can apply themes, activate plugins, and hook into UI components — all in real time.
+This site documents features that are visible in the local repository:
 
-<Note>
-  Illegalcord is **entirely client-side**. It does not modify Discord's servers, alter your account in any way, or transmit any data on your behalf. Every change you make stays on your own machine.
-</Note>
+| Area | Source path |
+|---|---|
+| Plugin API and lifecycle | `src/utils/types.ts`, `src/api`, `src/webpack` |
+| Settings UI | `src/plugins/_core/settings.tsx`, `src/components/settings` |
+| Themes and QuickCSS | `src/api/Themes.ts`, `src/components/ThemeSettings` |
+| Desktop injection and updater | `src/main`, `scripts/runInstaller.mjs` |
+| Browser extension and userscript | `browser`, `scripts/build/buildWeb.mjs` |
+| Bundled plugins | `src/plugins`, `src/equicordplugins`, `src/userplugins` |
 
-Because the injection happens locally, uninstalling Illegalcord fully restores Discord to its original state. Your account, messages, and server memberships are never affected.
+## Who should read this
 
-## Supported Platforms
-
-Illegalcord runs on all three major desktop operating systems:
-
-| Platform | Supported Versions |
-|----------|---------------------|
-| **Windows** | Windows 10 and Windows 11 |
-| **macOS** | macOS 12 Monterey and later |
-| **Linux** | Most mainstream distributions (see install notes for Flatpak/Snap caveats) |
+- Users who want to build and inject Illegalcord from source.
+- Contributors who need to understand the project layout before editing code.
+- Plugin developers who want examples that match the real aliases and APIs used here.
+- Maintainers who need a documentation site that can live beside the client source.
 
 <Info>
-  Mobile versions of Discord (iOS and Android) are not supported. Illegalcord requires the Discord desktop application.
+  If a page mentions a command, API, setting tab, or folder, it should exist in this repository. That is the main compatibility goal of this website.
 </Info>
-
-## Ready to Install?
-
-Head over to the [Installation guide](/installation) to get Illegalcord running on your machine in just a few minutes.

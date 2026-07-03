@@ -1,80 +1,53 @@
 ---
-title: "Message Display Tweaks and Controls in Illegalcord"
-sidebarTitle: "Message Tweaks"
-description: "Customize how Discord messages look with Illegalcord — switch to compact mode, change timestamp formats, block embeds, and highlight mentions your way."
+title: "Message Tools"
+sidebarTitle: "Message Tools"
+description: "Use Illegalcord's bundled plugins and APIs to change message display and chat behavior."
 ---
 
-Illegalcord gives you fine-grained control over how messages appear in Discord. Instead of accepting Discord's one-size-fits-all layout, you can switch to a denser view, reformat timestamps, suppress embed clutter, and even keep deleted messages visible — all from within your client settings.
+Message behavior in Illegalcord is mostly plugin-driven. The base APIs expose declarative message hooks, message accessories, message decorations, message popover buttons, chat bar buttons, and context menu integration.
 
-## Compact Mode
+## Common message plugin categories
 
-Compact Mode strips avatar thumbnails from the message list and tightens line spacing, letting you see significantly more messages on screen at once. It's ideal for high-traffic servers or anyone who prefers a chat-style layout over Discord's default cozy view.
+| Category | What to search for |
+|---|---|
+| Logging and history | `MessageLogger`, `MessageLoggerEnhanced`, or the `Chat` tag. |
+| Translation | `Translate`, `Translate+`, `MessageTranslate`, or translation-related search terms. |
+| Quick replies | `QuickReply`, `reply`, or the `Shortcuts` tag. |
+| Typing indicators | `TypingTweaks`, `TypingIndicator`, `SilentTyping`, or `typing`. |
+| Message actions | `MessageClickActions`, `QuickMention`, `SendTimestamps`, or `Chat`. |
 
-To enable it, go to **Settings → General → Compact Mode** and toggle it on. The change takes effect immediately — no restart required.
+## Declarative message APIs
 
-## Timestamp Formats
+Plugin authors should prefer declarative fields on the plugin object:
 
-By default, Illegalcord shows relative timestamps ("5 minutes ago"). If you prefer an exact clock, switch to a fixed format.
+| Field | Use |
+|---|---|
+| `onBeforeMessageSend` | Read, modify, or cancel outgoing messages before send. |
+| `onBeforeMessageEdit` | Read, modify, or cancel message edits. |
+| `onMessageClick` | React to message clicks. |
+| `messagePopoverButton` | Add an action to the message popover. |
+| `renderMessageAccessory` | Render content below a message. |
+| `renderMessageDecoration` | Render inline message decoration. |
 
-<Tabs>
-  <Tab title="Relative">
-    Displays how long ago a message was sent — for example, **"2 minutes ago"** or **"Yesterday at 3:00 PM"**. This is the default and keeps the focus on recency rather than exact time.
-  </Tab>
-  <Tab title="12-Hour">
-    Shows a standard 12-hour clock with AM/PM — for example, **"3:42 PM"**. Familiar for users in regions that use the 12-hour convention.
-  </Tab>
-  <Tab title="24-Hour">
-    Shows a 24-hour clock — for example, **"15:42"**. Preferred for technical users, logging workflows, or anyone in a 24-hour locale.
-  </Tab>
-</Tabs>
+Declarative fields keep lifecycle handling in `PluginManager` and automatically enable the matching API plugin.
 
-Change your preference under **Settings → General → Timestamp Format**.
+## User workflow
 
-## Embed Controls
-
-Link previews and media embeds can quickly fill a channel with noise. Illegalcord's **EmbedBlocker** plugin lets you suppress them globally or on a per-server basis.
-
-Once you enable **Settings → Plugins → EmbedBlocker**, you'll see the following options:
-
-- **Disable all link previews** — suppresses every embed regardless of content type.
-- **Hide images** — strips image embeds while keeping link metadata visible.
-- **Hide videos** — prevents video players from auto-expanding inline.
-- **Hide link embeds** — removes the card preview for URLs without media.
-- **Per-server overrides** — right-click any server in your sidebar and choose **Embed Settings** to set server-specific rules.
-
-<Note>
-  EmbedBlocker only affects your local client view. Other users in the channel still see embeds normally.
-</Note>
-
-## Message Ghosting
-
-Message ghosting prevents Discord from sending read-receipt signals to other users, so they can't tell when you've opened and read a message. Enable it under **Settings → Privacy → Message Ghosting**.
-
-## Deleted Message History
-
-With the **MessageLogger** plugin enabled, messages that are deleted by their author or a moderator remain visible in your client, rendered with a strikethrough to indicate they've been removed. This applies to both DMs and server channels.
-
-Enable the plugin at **Settings → Plugins → MessageLogger**. Logged messages are stored locally and are never uploaded anywhere.
+<Steps>
+  <Step title="Open Plugins">
+    Go to **Illegalcord Settings > Plugins**.
+  </Step>
+  <Step title="Filter by tags">
+    Try `Chat`, `Shortcuts`, `Utility`, or `Privacy`.
+  </Step>
+  <Step title="Read plugin details">
+    Open the info modal before enabling a plugin that changes message behavior.
+  </Step>
+  <Step title="Enable one at a time">
+    Test message-related plugins one by one so you can isolate conflicts.
+  </Step>
+</Steps>
 
 <Warning>
-  Use MessageLogger responsibly. Retaining deleted messages from private conversations without consent may violate the trust of the people you chat with.
+  Some message plugins can retain or transform local message content. Review settings and source before enabling behavior that affects private conversations.
 </Warning>
-
-## Mention Highlights
-
-Illegalcord lets you customize the highlight color used for `@mentions` so they stand out clearly against your active theme. Open **Settings → Appearance → Mention Color** to pick any hex color or choose from the preset palette.
-
-## Quick Reference
-
-| Feature | Location | Default |
-|---|---|---|
-| Compact Mode | Settings → General | Off |
-| Timestamp Format | Settings → General | Relative |
-| Hide Embeds | Settings → Plugins → EmbedBlocker | Off |
-| Message Ghosting | Settings → Privacy | Off |
-| Deleted Message History | Settings → Plugins → MessageLogger | Off |
-| Mention Highlight Color | Settings → Appearance | Theme default |
-
-<Tip>
-  Compact Mode and a 24-hour timestamp pair well together if you use Discord for work or developer communities — they maximize information density without sacrificing readability.
-</Tip>

@@ -1,130 +1,89 @@
 ---
-title: "Build Your First Illegalcord Plugin: A Full Walkthrough"
+title: "Build Your First Plugin"
 sidebarTitle: "First Plugin"
-description: "Step-by-step guide to writing your first Illegalcord plugin, covering definePlugin, settings, the Patcher API, and the start and stop lifecycle."
+description: "Create a small Illegalcord plugin inside the local source tree."
 ---
 
-Building a plugin for Illegalcord is straightforward once your environment is ready. This guide walks you through creating **PrefixAdder** — a plugin that prepends a custom text prefix to every message you send. By the end, you'll have a working, configurable plugin running inside Discord.
+This guide creates `PrefixEveryMessage`, a small plugin that adds a configurable prefix to outgoing messages. It uses the declarative `onBeforeMessageSend` field, so `PluginManager` handles registration and cleanup.
 
-## Prerequisites
+## Create the folder
 
-- Completed the Illegalcord [developer environment setup](/plugin-dev/getting-started)
-- Illegalcord installed with **Developer Mode** enabled (Settings → Illegalcord → Advanced → Developer Mode)
+Create:
 
-## Build PrefixAdder
+```text
+src/userplugins/prefixEveryMessage/index.ts
+```
 
-<Steps>
-  <Step title="Create the plugin file">
-    Create a new folder for your plugin (e.g. `PrefixAdder/`) inside your local plugins directory, then add `index.ts` with the following content:
+## Add the plugin
 
-    ```typescript index.ts
-    import { definePlugin, definePluginSettings } from "@illegalcord/api";
-    import { Patcher, findByProps } from "@illegalcord/api";
+```typescript
+/*
+ * Vencord, a Discord client mod
+ * Copyright (c) 2026 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
-    const settings = definePluginSettings({
-      prefix: {
-        type: "string",
-        description: "Text to prepend to every message",
-        default: "[Illegalcord] ",
-      },
-      enabled: {
-        type: "boolean",
-        description: "Enable the prefix",
-        default: true,
-      },
-    });
+import { definePluginSettings } from "@api/Settings";
+import type { MessageObject } from "@api/MessageEvents";
+import { EquicordDevs } from "@utils/constants";
+import definePlugin, { OptionType } from "@utils/types";
 
-    export default definePlugin({
-      name: "PrefixAdder",
-      description: "Prepends a custom prefix to every message you send",
-      authors: [{ name: "YourName", id: 0n }],
-      settings,
-
-      start() {
-        const MessageActions = findByProps("sendMessage");
-        Patcher.before("PrefixAdder", MessageActions, "sendMessage", (_, args) => {
-          const [, message] = args;
-          if (settings.store.enabled && message.content) {
-            message.content = settings.store.prefix + message.content;
-          }
-        });
-      },
-
-      stop() {
-        Patcher.unpatchAll("PrefixAdder");
-      },
-    });
-    ```
-
-    Replace `"YourName"` with your own display name. The `id` field accepts a Discord user snowflake as a `BigInt` — use `0n` as a placeholder while developing locally.
-  </Step>
-
-  <Step title="Create manifest.json">
-    In the same `PrefixAdder/` folder, add a `manifest.json` file that describes your plugin:
-
-    ```json manifest.json
-    {
-      "name": "PrefixAdder",
-      "description": "Prepends a custom prefix to every message you send",
-      "version": "1.0.0",
-      "authors": [
-        { "name": "YourName" }
-      ]
+const settings = definePluginSettings({
+    enabled: {
+        type: OptionType.BOOLEAN,
+        description: "Add the prefix to outgoing messages.",
+        default: true
+    },
+    prefix: {
+        type: OptionType.STRING,
+        description: "Text to add before each outgoing message.",
+        default: "[Illegalcord] "
     }
-    ```
+});
 
-    Illegalcord reads this file to display your plugin's name and description in the plugin browser. Keep the `version` field in semantic versioning format (`MAJOR.MINOR.PATCH`).
-  </Step>
+export default definePlugin({
+    name: "PrefixEveryMessage",
+    description: "Adds a configurable prefix to messages you send.",
+    authors: [EquicordDevs.irritably],
+    settings,
 
-  <Step title="Load the plugin">
-    With both files saved, load your plugin into Discord:
+    onBeforeMessageSend(_channelId: string, message: MessageObject) {
+        const { enabled, prefix } = settings.store;
+        if (!enabled || !message.content.trim()) return;
 
-    1. Open Discord and navigate to **Settings → Illegalcord → Plugins**.
-    2. Click **Load Unpacked**.
-    3. Select your `PrefixAdder/` folder.
-    4. Toggle the plugin **on** using the switch next to its name.
+        message.content = prefix + message.content;
+    }
+});
+```
 
-    Illegalcord will call your plugin's `start()` function immediately after you enable it.
-  </Step>
+Replace `EquicordDevs.irritably` with your own author entry before submitting the plugin.
 
-  <Step title="Configure the prefix">
-    Now that PrefixAdder is running, customize your prefix:
+## Build and test
 
-    1. Click the **gear icon** (⚙️) next to PrefixAdder in the plugin list.
-    2. Set your desired prefix text in the **Text to prepend to every message** field.
-    3. Open any Discord channel and send a test message.
-    4. Confirm the message appears with your prefix prepended.
+Run:
 
-    <Tip>
-      Try a short, recognizable prefix like `[Test] ` during development so you can quickly spot prefixed messages in the chat log.
-    </Tip>
-  </Step>
+```bash
+pnpm build
+pnpm inject
+```
 
-  <Step title="Edit and hot-reload">
-    Illegalcord watches your plugin files and reloads automatically when it detects a change:
+Restart Discord, open **Illegalcord Settings > Plugins**, search for `PrefixEveryMessage`, and enable it.
 
-    1. Open `index.ts` in your editor and change the `default` value of `prefix` to something new.
-    2. Save the file — Illegalcord detects the change and hot-reloads PrefixAdder.
-    3. Send another test message and verify the new prefix is applied.
+## Configure it
 
-    You don't need to manually disable and re-enable the plugin after each save. Hot-reload calls `stop()` to remove existing patches, then `start()` to apply the updated code.
-  </Step>
-</Steps>
+Open the plugin cog wheel and edit:
 
-<Note>
-  Calling `Patcher.unpatchAll("PrefixAdder")` inside `stop()` is essential. It removes the `sendMessage` patch when the plugin is disabled or reloaded, preventing duplicate patches from stacking on top of each other.
-</Note>
+| Setting | Default |
+|---|---|
+| **Add the prefix to outgoing messages.** | `true` |
+| **Text to add before each outgoing message.** | `[Illegalcord] ` |
 
-<Tip>
-  Open the Discord DevTools console with **Ctrl+Shift+I** and run the following to inspect your live plugin instance:
+Send a test message in a private test channel.
 
-  ```javascript
-  Illegalcord.Plugins.getPlugin("PrefixAdder")
-  ```
+## Clean up
 
-  This returns the plugin object, including its current settings store, so you can confirm values are being read correctly without adding extra logging.
-</Tip>
+This plugin uses a declarative field, so no manual `stop()` cleanup is needed. If you later add timers, event listeners, manual API registrations, or Flux subscriptions outside declarative fields, clean them up in `stop()`.
 
-## Next steps
-
-Now that PrefixAdder is working, you're ready to share it with other Illegalcord users. Follow the [Publishing guide](/plugin-dev/guides/publishing) to learn how to push your plugin to GitHub or submit it to the official Illegalcord plugin repository.
+<Warning>
+  Do not keep this plugin enabled in normal chats unless you intentionally want every sent message modified.
+</Warning>

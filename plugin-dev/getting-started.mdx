@@ -1,153 +1,77 @@
 ---
-title: "Set Up Your Illegalcord Plugin Development Environment"
+title: "Developer Setup"
 sidebarTitle: "Dev Setup"
-description: "Set up a local development environment to build and test Illegalcord plugins, with hot reload support for faster iteration during development."
+description: "Set up the Illegalcord repository for plugin development."
 ---
 
-Before you can build and test an Illegalcord plugin, you need a working local environment: the right version of Node.js, a copy of the plugin template, and Illegalcord's Developer Mode switched on so the client can load unpacked plugins and watch for file changes. This guide walks you through every step.
+Plugin development happens inside the Illegalcord source tree. You do not need a separate plugin template or `manifest.json`.
 
-## Prerequisites
+## Requirements
 
-Make sure you have all three of the following before you begin:
+- Node.js 22 or newer.
+- `pnpm`.
+- A local clone of Illegalcord.
+- Discord desktop for testing desktop injection, or a browser target for `pnpm buildWeb`.
 
-- **Node.js 18 or later** — [nodejs.org](https://nodejs.org) — the build toolchain requires it.
-- **A code editor** — [VS Code](https://code.visualstudio.com) is recommended; the plugin template includes a `.vscode/` folder with useful extension recommendations.
-- **Discord with Illegalcord installed** — your plugin runs inside the client, so you need Illegalcord loaded before you can test anything.
-
-<Warning>
-  Using a Node.js version older than 18 will cause build errors in the plugin template. Run `node -v` to check your current version before proceeding.
-</Warning>
-
-## Setup walkthrough
+## Setup
 
 <Steps>
-  <Step title="Enable Developer Mode in Illegalcord">
-    Open Discord, then navigate to **Settings → Illegalcord → General** and toggle **Enable Developer Mode** on.
-
-    Developer Mode unlocks two things you need for local plugin work: the **Load Unpacked** button in the Plugins tab, and the file-system watcher that triggers hot reload whenever you save a change.
-
-    <Note>
-      You only need to do this once. Developer Mode persists across Discord restarts.
-    </Note>
-  </Step>
-
-  <Step title="Clone the plugin template">
-    Open your terminal and run the following commands to clone the official plugin template and install its dependencies:
+  <Step title="Install dependencies">
+    From the repository root:
 
     ```bash
-    git clone https://github.com/illegalcord/plugin-template my-plugin
-    cd my-plugin
-    npm install
+    pnpm install --frozen-lockfile
     ```
-
-    This gives you a fully configured TypeScript project with Illegalcord's type definitions, an esbuild pipeline, and a working `manifest.json`.
-
-    <Tip>
-      Replace `my-plugin` with the actual name of your plugin. Keep it lowercase with hyphens — this becomes the folder name Illegalcord uses to identify your plugin on disk.
-    </Tip>
   </Step>
-
-  <Step title="Understand the project structure">
-    After cloning, your project folder looks like this:
-
-    ```
-    my-plugin/
-    ├── index.ts        # Main plugin entry point — export your definePlugin() call here
-    ├── manifest.json   # Plugin metadata read by Illegalcord at load time
-    ├── tsconfig.json   # TypeScript configuration (pre-configured, rarely needs changes)
-    └── package.json    # npm scripts and dev dependencies
-    ```
-
-    You will spend most of your time in `index.ts`. The other files rarely need editing beyond the initial metadata setup in `manifest.json`.
+  <Step title="Choose a plugin folder">
+    Use `src/userplugins/<name>` for Illegalcord-specific bundled plugins, `src/equicordplugins/<name>` for Equicord-specific work, or `src/plugins/<name>` for stock plugin changes.
   </Step>
-
-  <Step title="Fill in manifest.json">
-    Open `manifest.json` and update the four required fields:
-
-    ```json
-    {
-      "name": "MyPlugin",
-      "description": "A short, clear description of what your plugin does.",
-      "version": "1.0.0",
-      "authors": [
-        {
-          "name": "YourName",
-          "id": "your-discord-snowflake-id"
-        }
-      ]
-    }
-    ```
-
-    | Field | Description |
-    |---|---|
-    | `name` | The display name shown in the Plugins tab. Must be unique. |
-    | `description` | A one-sentence summary of what the plugin does. |
-    | `version` | Semantic version string. Start at `1.0.0`. |
-    | `authors` | An array of contributor objects, each with a `name` and Discord `id`. |
-
-    <Note>
-      Your Discord snowflake ID is a large integer, not your username. You can find it by right-clicking your profile in Discord (with Discord's own Developer Mode enabled) and selecting **Copy User ID**.
-    </Note>
-  </Step>
-
-  <Step title="Start the development build">
-    Run the dev script to compile your TypeScript and start watching for changes:
+  <Step title="Build in watch mode">
+    For desktop work:
 
     ```bash
-    npm run dev
+    pnpm watch
     ```
 
-    The watcher emits a new build every time you save a file. Once the initial build completes, load your plugin into Discord:
+    For web work:
 
-    1. Open **Settings → Plugins** inside Discord.
-    2. Click **Load Unpacked**.
-    3. Select your `my-plugin/` folder.
-
-    Illegalcord reads `manifest.json`, loads the compiled output, and calls your plugin's `start()` method. You should see your plugin listed as active in the Plugins tab.
-
-    <CodeGroup>
-      ```bash npm
-      npm run dev
-      ```
-      ```bash pnpm
-      pnpm dev
-      ```
-    </CodeGroup>
+    ```bash
+    pnpm watchWeb
+    ```
   </Step>
-
-  <Step title="Iterate with hot reload">
-    As long as **Developer Mode** is enabled and `npm run dev` is running, Illegalcord watches your plugin folder for file changes. When it detects a new build output, it automatically calls your plugin's `stop()` method, swaps in the updated code, and calls `start()` again — no manual reload required.
-
-    The full hot-reload cycle looks like this:
-
-    1. You edit `index.ts` and save.
-    2. `npm run dev` recompiles the file in milliseconds.
-    3. Illegalcord detects the new output, stops the old plugin instance, and starts the new one.
-    4. Your changes appear in Discord immediately.
-
-    <Tip>
-      Make sure your `stop()` function cleans up everything `start()` sets up — event listeners, patches, injected components. Incomplete teardown causes ghost behavior where old code keeps running alongside new code during hot reload.
-    </Tip>
+  <Step title="Inject or reload">
+    Use `pnpm inject` after a desktop build, then restart Discord. For web, reload the extension output from `dist`.
   </Step>
 </Steps>
 
-## Debugging your plugin
+## Validation commands
 
-Open Discord's built-in DevTools with **Ctrl+Shift+I** (Windows/Linux) or **Cmd+Option+I** (macOS). The **Console** tab shows any errors thrown by your plugin along with your own `console.log()` output. The **Sources** tab lets you set breakpoints in the compiled plugin output.
+Run focused checks before committing plugin work:
 
-```typescript
-// Useful during development — remove before publishing
-console.log("[MyPlugin] start() called");
+```bash
+pnpm testTsc
+pnpm lint
+pnpm lint:patches
+pnpm generatePluginJson
 ```
 
+If your plugin includes CSS:
+
+```bash
+pnpm lint-styles
+```
+
+## New plugin checklist
+
+- Add the SPDX header at the top of each new source file.
+- Export `definePlugin({ ... })` as the default export.
+- Include `name`, `description`, and `authors`.
+- Use `Devs` or `EquicordDevs` for authors.
+- Add `dependencies` for imperative API usage.
+- Prefer declarative plugin fields.
+- Clean up every timer, listener, observer, subscription, and manual registration.
+- Regenerate plugin metadata with `pnpm generatePluginJson`.
+
 <Tip>
-  Filter the Console by your plugin's name to cut through Discord's own log noise. Type your plugin name in the console filter box to show only matching entries.
+  Keep the first version in one file. Split only when a second file is genuinely reusable or the plugin grows past a comfortable size.
 </Tip>
-
-## Next steps
-
-With your environment running and hot reload working, you are ready to write real plugin logic. The first plugin guide walks you through building a complete, functional plugin from scratch.
-
-<Card title="Build Your First Plugin" icon="rocket" href="/plugin-dev/guides/first-plugin">
-  Write a working Illegalcord plugin step by step — from an empty `index.ts` to a deployed, user-facing feature.
-</Card>

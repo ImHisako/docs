@@ -1,133 +1,69 @@
 ---
-title: "Illegalcord Plugin API: Events and Flux Subscriptions"
+title: "Events and Flux"
 sidebarTitle: "Events"
-description: "Subscribe to Discord and Illegalcord events from your plugin. Listen for messages, voice state changes, and Illegalcord lifecycle events."
+description: "Subscribe to Discord Flux events using the declarative Illegalcord plugin field."
 ---
 
-Illegalcord exposes a full event system so your plugin can react to things happening inside Discord — incoming messages, voice state changes, channel switches — as well as Illegalcord's own plugin lifecycle. You subscribe to events when your plugin starts and unsubscribe when it stops.
+Discord state changes are dispatched through Flux. Illegalcord plugins can listen to those actions through the declarative `flux` field.
 
-## FluxDispatcher
-
-Discord manages application state through a Flux architecture. Every action — a new message, a user going online, a channel being selected — is dispatched as a typed event. Illegalcord gives you direct access to the dispatcher so your plugin can tap into that stream.
-
-### `FluxDispatcher.subscribe(type, handler)`
-
-Registers a handler function for a specific Flux event type. Your handler is called every time that event fires, receiving the event's payload as its only argument.
+## Declarative flux
 
 ```typescript
-import { FluxDispatcher } from "@illegalcord/api";
+import { Logger } from "@utils/Logger";
+import { EquicordDevs } from "@utils/constants";
+import definePlugin from "@utils/types";
+import type { Message } from "@vencord/discord-types";
 
-FluxDispatcher.subscribe("MESSAGE_CREATE", ({ message }) => {
-  console.log("New message:", message.content);
+const logger = new Logger("FluxExample");
+
+interface MessageCreateEvent {
+    message: Message;
+}
+
+export default definePlugin({
+    name: "FluxExample",
+    description: "Logs when a non-bot message event is observed.",
+    authors: [EquicordDevs.irritably],
+
+    flux: {
+        MESSAGE_CREATE({ message }: MessageCreateEvent) {
+            if (message.author?.bot) return;
+            logger.debug("Observed MESSAGE_CREATE.");
+        }
+    }
 });
 ```
 
-<ParamField path="type" type="string" required>
-  The Flux event type string, for example `"MESSAGE_CREATE"`. Event type strings are case-sensitive.
-</ParamField>
+`PluginManager` subscribes and unsubscribes declarative Flux handlers for you. It also wraps handlers and logs thrown errors.
 
-<ParamField path="handler" type="(payload: object) => void" required>
-  A function that receives the event payload. The shape of the payload depends on the event type — see the table below.
-</ParamField>
+## Common event names
 
-### `FluxDispatcher.unsubscribe(type, handler)`
+| Event | Typical use |
+|---|---|
+| `MESSAGE_CREATE` | React to new messages. |
+| `MESSAGE_UPDATE` | React to message edits. |
+| `MESSAGE_DELETE` | React to message deletion. |
+| `CHANNEL_SELECT` | React to channel navigation. |
+| `VOICE_STATE_UPDATE` | React to voice joins, leaves, and moves. |
+| `PRESENCE_UPDATE` | React to presence or activity changes. |
 
-Removes a previously registered handler. You must pass the **same function reference** that you passed to `subscribe` — anonymous functions passed inline cannot be unsubscribed.
+Event payloads are internal Discord objects and can change. Type only the fields you read.
+
+## Manual subscriptions
+
+Use manual `FluxDispatcher.subscribe` only for scoped React effects or late conditional subscriptions. Always keep the same function reference and unsubscribe it.
 
 ```typescript
-import { FluxDispatcher } from "@illegalcord/api";
+import { FluxDispatcher } from "@webpack/common";
 
-function onMessageCreate({ message }) {
-  console.log("New message:", message.content);
+function onMessageCreate(event: unknown) {
+    // Handle scoped event.
 }
 
-// Subscribe
 FluxDispatcher.subscribe("MESSAGE_CREATE", onMessageCreate);
-
-// Later, in stop():
 FluxDispatcher.unsubscribe("MESSAGE_CREATE", onMessageCreate);
 ```
 
-<ParamField path="type" type="string" required>
-  The same event type string you used when subscribing.
-</ParamField>
-
-<ParamField path="handler" type="function" required>
-  The exact same function reference passed to `subscribe`. Store your handlers as named methods or module-level functions so you can reference them during cleanup.
-</ParamField>
-
----
-
-## Common Flux Events
-
-The table below covers the Discord Flux events most commonly used in plugin development.
-
-| Event | Payload Fields | Description |
-|-------|----------------|-------------|
-| `MESSAGE_CREATE` | `message` | A new message was received in any channel. |
-| `MESSAGE_UPDATE` | `message` | An existing message was edited. |
-| `MESSAGE_DELETE` | `id`, `channelId` | A message was deleted. |
-| `VOICE_STATE_UPDATE` | `userId`, `channelId` | A user joined, moved, or left a voice channel. |
-| `PRESENCE_UPDATE` | `user`, `status` | A user's online status or activity changed. |
-| `CHANNEL_SELECT` | `channelId`, `guildId` | The local user switched to a different channel. |
-
-<Info>
-  This list covers the most commonly used events, but Discord dispatches many more. You can discover additional event types by logging all dispatched actions during development: `FluxDispatcher.subscribe("", payload => console.log(payload))` — an empty string matches every event type.
-</Info>
-
----
-
-## Plugin Lifecycle Events
-
-Beyond Flux, Illegalcord itself calls two lifecycle methods on your plugin object: `start()` and `stop()`. These are defined directly on the object you pass to `definePlugin`.
-
-### `start()`
-
-Called by Illegalcord immediately after the user enables your plugin (or on client load if it was already enabled). Set up all your subscriptions and patches here.
-
-### `stop()`
-
-Called when the user disables your plugin or before the client unloads. Tear down every subscription and patch here to leave Discord's state exactly as you found it.
-
-```typescript
-import { definePlugin, FluxDispatcher, Patcher } from "@illegalcord/api";
-
-export default definePlugin({
-  name: "MyPlugin",
-  description: "An example plugin",
-  authors: [{ name: "You", id: 0n }],
-
-  start() {
-    FluxDispatcher.subscribe("MESSAGE_CREATE", this.onMessage);
-  },
-
-  stop() {
-    FluxDispatcher.unsubscribe("MESSAGE_CREATE", this.onMessage);
-    Patcher.unpatchAll("MyPlugin");
-  },
-
-  onMessage({ message }) {
-    console.log(message.content);
-  },
-});
-```
-
-<Steps>
-  <Step title="Define named handlers">
-    Declare your event handlers as methods on the plugin object (or as module-level named functions). This guarantees you have a stable reference to pass to both `subscribe` and `unsubscribe`.
-  </Step>
-  <Step title="Subscribe in start()">
-    Call `FluxDispatcher.subscribe` for every event your plugin needs inside `start()`. Apply any `Patcher` patches here too.
-  </Step>
-  <Step title="Clean up in stop()">
-    Mirror every `subscribe` call with a matching `unsubscribe` call in `stop()`. Finish with `Patcher.unpatchAll("MyPlugin")` to remove all patches.
-  </Step>
-</Steps>
-
 <Warning>
-  Never skip the `stop()` cleanup. Subscriptions and patches registered by a disabled plugin continue to execute in the background, causing ghost behavior — actions that fire even though your plugin is off — and memory leaks that persist until the client is fully reloaded.
+  Do not use both declarative `flux` and manual `subscribe` for the same event in the same plugin.
 </Warning>
-
-<Tip>
-  If your handler needs access to `this` (the plugin object), define it as an arrow function assigned to a property rather than a plain method, or bind it explicitly in `start()`: `this.boundHandler = this.onMessage.bind(this)`. Then unsubscribe using `this.boundHandler` in `stop()`.
-</Tip>

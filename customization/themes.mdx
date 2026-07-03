@@ -1,143 +1,61 @@
 ---
-title: "Install, Create, and Manage Discord Themes in Illegalcord"
+title: "Themes and QuickCSS"
 sidebarTitle: "Themes"
-description: "Browse and install community themes, write custom CSS, and use CSS variable overrides to fully personalize your Discord client with Illegalcord."
+description: "Use QuickCSS, local themes, and theme links in Illegalcord."
 ---
 
-Illegalcord themes are CSS stylesheets that change the visual appearance of your Discord client — from color palettes and fonts to full interface overhauls. You can install themes from the online store, paste in your own CSS, or write a theme from scratch. Everything updates live, so you see changes the moment you apply them.
+Illegalcord theme support is built around CSS. The source code stores theme state through `@api/Settings` and loads CSS through `src/api/Themes.ts`.
 
-## What Themes Are
+## Theme surfaces
 
-A theme is a `.css` file that Illegalcord injects into the Discord client after it loads. Because themes run as CSS, they can restyle any visible element — backgrounds, text colors, sidebars, buttons, and more — without touching Discord's underlying code or your account.
+| Surface | Use it for |
+|---|---|
+| QuickCSS | Small local CSS changes edited from **Illegalcord > Edit QuickCSS** or the **Themes** tab. |
+| Local themes | Theme files stored in the local themes folder exposed by the native client. |
+| Theme links | Remote CSS links stored in `Settings.themeLinks` and enabled through theme settings. |
+| Theme activation modes | Per-theme rules such as always, light theme only, or dark theme only. |
 
-## Finding and Installing Themes
-
-<Tabs>
-  <Tab title="From the Store">
-    The Illegalcord theme store hosts community-made themes that have been reviewed for safety.
-
-    <Steps>
-      <Step title="Open Discord Settings">
-        Click the **gear icon** in the bottom-left corner of Discord to open User Settings.
-      </Step>
-      <Step title="Navigate to the Themes tab">
-        Scroll down in the left sidebar until you see the **Illegalcord** section, then click **Themes**.
-      </Step>
-      <Step title="Open the store">
-        Click the **Browse Themes** button at the top of the panel. The online theme store opens in a new overlay.
-      </Step>
-      <Step title="Install a theme">
-        Find a theme you like and click the **Install** button on its card. Illegalcord downloads and registers it automatically.
-      </Step>
-    </Steps>
-  </Tab>
-  <Tab title="Manual Installation">
-    If you have a direct CSS URL or raw CSS code, you can install a theme without going through the store.
-
-    <Steps>
-      <Step title="Open the Themes tab">
-        Go to **Discord Settings → Illegalcord → Themes**.
-      </Step>
-      <Step title="Open the Custom CSS editor">
-        Click **Custom CSS** in the Themes panel.
-      </Step>
-      <Step title="Paste your CSS">
-        Either paste a remote stylesheet URL using an `@import` rule, or paste raw CSS directly into the editor:
-
-        ```css
-        /* Import from a URL */
-        @import url("https://example.com/my-theme.css");
-
-        /* Or paste raw CSS directly */
-        :root {
-          --background-primary: #1a1a2e;
-          --text-normal: #e0e0e0;
-        }
-        ```
-      </Step>
-      <Step title="Apply the theme">
-        Click **Save & Apply**. Your changes take effect immediately.
-      </Step>
-    </Steps>
-
-    <Warning>
-      Themes from untrusted sources can contain malicious CSS — including styles that obscure UI elements or mimic phishing pages. Only install themes from authors you trust or from the official Illegalcord store.
-    </Warning>
-  </Tab>
-</Tabs>
-
-## Enabling and Disabling Themes
-
-Every installed theme appears as a row in the **Themes** tab with a toggle switch on the right. Flip the toggle to enable or disable the theme instantly — no restart required.
-
-You can have multiple themes enabled at the same time. Illegalcord stacks them in the order they appear in the list, so themes lower in the list can override rules from themes higher up.
-
-<Tip>
-  Drag theme rows to reorder them and control which styles take priority when rules conflict.
-</Tip>
-
-## Switching Between Multiple Themes
-
-To swap your active look quickly, disable your current theme's toggle and enable another one. Because toggles are instant, you can preview themes back-to-back without any loading delay.
-
-## Creating Your Own Theme
-
-Building a theme requires only a basic understanding of CSS. Discord's interface uses CSS custom properties (variables) extensively, so overriding a handful of variables is often enough to produce a dramatic change.
+## Edit QuickCSS
 
 <Steps>
-  <Step title="Identify the elements you want to change">
-    Open Discord's built-in DevTools by pressing <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (or <kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd> on macOS). Use the element inspector to click on any part of the interface and see which CSS classes and variables it uses.
+  <Step title="Open the editor">
+    Open **Illegalcord Settings > Illegalcord** and choose **Edit QuickCSS**, or open the **Themes** tab.
   </Step>
-  <Step title="Create your CSS file">
-    Create a new file with a `.css` extension and start by overriding CSS variables on `:root`:
-
-    ```css
-    /* my-theme.css */
-    :root {
-      --background-primary: #1e1e2e;
-      --background-secondary: #181825;
-      --text-normal: #cdd6f4;
-      --text-muted: #a6adc8;
-      --brand-experiment: #cba6f7;
-    }
-    ```
+  <Step title="Write CSS">
+    Add small CSS changes and save. QuickCSS reloads without rebuilding the client.
   </Step>
-  <Step title="Target specific elements">
-    For more precise changes, target Discord's generated class names directly. Because these names can change with Discord updates, prefer CSS variables where possible:
-
-    ```css
-    /* Style the member list sidebar */
-    [class*="members_"] {
-      background-color: #181825;
-    }
-
-    /* Round message avatars more aggressively */
-    [class*="avatar_"] {
-      border-radius: 50% !important;
-    }
-    ```
-  </Step>
-  <Step title="Import your theme into Illegalcord">
-    Save the file, then paste its contents (or host it and use `@import`) into the **Custom CSS** editor under **Settings → Illegalcord → Themes**.
+  <Step title="Back up your work">
+    Export QuickCSS from **Backup & Restore** before large edits.
   </Step>
 </Steps>
 
+```css
+:root {
+  --background-primary: #1e1f24;
+  --background-secondary: #17181d;
+  --text-normal: #f2f3f5;
+}
+```
+
+## Add theme files
+
+Use the **Themes** tab to open the themes folder when the native target supports it. Add `.css` files there, then reload themes from the UI.
+
 <Tip>
-  Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> inside Discord to open DevTools and inspect any element in real time. The **Styles** panel shows you exactly which CSS properties are active and where they come from.
+  Local files are easier to debug than long remote stylesheets. Start locally, then move to a hosted link when the theme is stable.
 </Tip>
 
-## Popular CSS Variables
+## Use theme links
 
-Override these variables in `:root` to cover the most visible parts of Discord's interface:
+Theme links are useful for CSS hosted on GitHub, a personal site, or another trusted source. Add only links you trust. CSS can hide UI, imitate prompts, or make the client hard to use.
 
-| Variable | Description |
-|---|---|
-| `--background-primary` | Main background color of the app (chat area, panels) |
-| `--background-secondary` | Secondary background used for sidebars and headers |
-| `--text-normal` | Default color for body text and message content |
-| `--text-muted` | Dimmed text color for timestamps, hints, and placeholders |
-| `--brand-experiment` | Discord's accent/brand color used for buttons and highlights |
+## Build-friendly CSS advice
 
-<Note>
-  Discord occasionally renames or removes CSS variables when it ships interface updates. If a variable stops working, use DevTools to find the current replacement.
-</Note>
+- Prefer Discord CSS variables for broad styling.
+- Avoid relying on generated class name fragments in long-lived themes.
+- Keep QuickCSS small and use local theme files for larger work.
+- Use **Backup & Restore > Export QuickCSS** before experimenting.
+
+<Warning>
+  A broken theme can make Discord hard to navigate. If that happens, remove the theme file, disable QuickCSS from settings data, or restore a known-good backup.
+</Warning>

@@ -1,126 +1,76 @@
 ---
-title: "Illegalcord Settings: General, Keybinds, and Cloud Sync"
+title: "Settings"
 sidebarTitle: "Settings"
-description: "Learn how to use every Illegalcord settings panel — general options, keybinds, cloud sync, and advanced configuration for your Discord client."
+description: "Use the Illegalcord settings tabs that are registered by the local Settings plugin."
 ---
 
-Illegalcord adds its own dedicated settings section to Discord, separate from Discord's native panels. From here you control every aspect of the mod — which plugins run, which themes are active, how your keyboard shortcuts work, and whether your configuration syncs across devices. Every change you make saves automatically the moment you make it.
+Illegalcord adds a dedicated settings section to Discord through `src/plugins/_core/settings.tsx`. The section title is **Illegalcord Settings**, and the entries are built from the local source at runtime.
 
-## Accessing Illegalcord Settings
-
-<Steps>
-  <Step title="Open Discord User Settings">
-    Click the **gear icon** in the bottom-left corner of Discord, next to your username.
-  </Step>
-  <Step title="Scroll to the Illegalcord section">
-    Scroll down the left sidebar past Discord's native settings categories. You'll find an **Illegalcord** heading with its own group of tabs below it.
-  </Step>
-  <Step title="Select a tab">
-    Click any tab under the Illegalcord heading to open that settings panel.
-  </Step>
-</Steps>
-
-## Settings Tabs Overview
+## Settings tabs
 
 <CardGroup cols={2}>
-  <Card title="General" icon="sliders">
-    Core behavioral options for the Illegalcord client — notification sounds, compact mode, developer tools, and window appearance.
-  </Card>
-  <Card title="Themes" icon="palette">
-    Browse, install, enable, and remove Discord themes. Access the Custom CSS editor to write your own styles. See [Themes](/customization/themes) for a full guide.
+  <Card title="Illegalcord" icon="sliders">
+    Main client settings, quick actions, notification settings, QuickCSS access, source link, and desktop window options.
   </Card>
   <Card title="Plugins" icon="puzzle-piece">
-    Install, configure, update, and disable Illegalcord plugins. Browse built-in plugins and add external ones by URL. See [Plugins](/customization/plugins) for a full guide.
+    Search, filter, enable, disable, and configure bundled plugins from `src/plugins`, `src/equicordplugins`, and `src/userplugins`.
   </Card>
-  <Card title="Keybinds" icon="keyboard">
-    Assign custom keyboard shortcuts to Illegalcord actions — toggle themes, mute yourself, open specific panels, and more. Each keybind can be scoped to work only when Discord is focused or globally across your system.
+  <Card title="Themes" icon="paintbrush">
+    Manage QuickCSS, local themes, theme links, theme reloads, and theme activation behavior.
   </Card>
-  <Card title="Cloud Sync" icon="cloud">
-    Optionally back up and sync your Illegalcord configuration across multiple devices using a free Illegalcord account.
+  <Card title="Updater" icon="rotate-cw">
+    Configure update behavior when the updater is available for the build target.
   </Card>
-  <Card title="About" icon="circle-info">
-    View the currently installed Illegalcord version, check for updates, read the changelog, and find links to community resources.
+  <Card title="Changelog" icon="list">
+    Review project changes from inside Discord.
+  </Card>
+  <Card title="Cloud" icon="cloud">
+    Sync settings through the configured cloud backend when cloud integration is enabled.
+  </Card>
+  <Card title="Backup & Restore" icon="archive">
+    Import or export all settings, plugin settings, QuickCSS, or DataStore data as JSON.
+  </Card>
+  <Card title="Patch Helper" icon="wrench">
+    Developer-only patch tooling shown in supported non-standalone builds.
   </Card>
 </CardGroup>
 
-## General Settings
+## Main client settings
 
-The **General** tab contains options that affect how Illegalcord behaves day-to-day. Open it at **Discord Settings → Illegalcord → General**.
+The **Illegalcord** tab contains project-level options. Available options vary by build target, but the local source includes:
 
-<Accordion title="Notification Sounds">
-  Toggle custom notification sounds on or off. When enabled, Illegalcord can replace or supplement Discord's default notification audio with theme-provided or plugin-provided sounds. Disable this if you want to keep Discord's standard audio behavior.
-</Accordion>
+| Setting | Purpose |
+|---|---|
+| **Enable Custom CSS** | Loads QuickCSS from the built-in editor. |
+| **Enable React Developer Tools** | Enables React DevTools for debugging in desktop builds. |
+| **Disable the Main Window Frame** | Changes desktop window framing when supported. |
+| **Disable All Window Frames** | Removes native window frames when supported. |
+| **Use Windows' native title bar** | Uses the standard Windows title bar in compatible builds. |
+| **Enable Window Transparency** | Makes the Discord window transparent when paired with a compatible theme. |
+| **Disable Minimum Window Size** | Allows smaller window sizes in supported desktop builds. |
+| **Register Ctrl+Q as shortcut to close Discord** | Adds a Windows desktop close shortcut when available. |
 
-<Accordion title="Compact Mode">
-  Enable **Compact Mode** to display messages in a denser layout — timestamps and usernames appear inline rather than above each message block. This is useful on smaller screens or if you prefer a more information-dense chat view. Toggle it off to return to the default cozy layout.
-</Accordion>
+<Info>
+  Some settings require a restart because they affect Electron window creation or build-time behavior.
+</Info>
 
-<Accordion title="Developer Mode">
-  Turning on **Developer Mode** exposes additional debugging options throughout the Illegalcord interface, including internal event logs, patch inspection tools, and verbose console output. Enable this if you are building or debugging a plugin or theme. Leave it off during normal use.
+## Plugin settings
 
-  <Note>
-    Developer Mode is separate from Discord's own Developer Mode (which enables copying IDs via right-click). You can enable both independently.
-  </Note>
-</Accordion>
+Plugins expose settings through `definePluginSettings` from `@api/Settings`. A plugin card shows a cog wheel when the plugin has settings.
 
-<Accordion title="Transparent Window">
-  **Transparent Window** removes the solid background from the Discord client window, letting your desktop wallpaper or other windows show through. This effect works best when paired with a theme that uses semi-transparent or translucent backgrounds.
+The Plugins tab also tracks restart-required changes. If you toggle a plugin with Webpack patches, the UI asks you to restart so the patch state stays consistent.
 
-  <Info>
-    Transparent Window requires a compositor (e.g., on Linux) or OS-level window transparency support. On some systems or display configurations the option may have no visible effect.
-  </Info>
-</Accordion>
+## Backups
 
-## Cloud Sync
+Use **Backup & Restore** before testing many plugins or themes. You can import or export:
 
-Cloud Sync is an optional feature that backs up your Illegalcord settings — including your enabled plugins, theme list, keybinds, and General preferences — to Illegalcord's servers. This lets you restore your full configuration on a new machine in seconds.
-
-<Steps>
-  <Step title="Create a free Illegalcord account">
-    Visit the Illegalcord website and sign up for a free account. Cloud Sync does not require a paid plan.
-  </Step>
-  <Step title="Log in inside Discord">
-    Go to **Discord Settings → Illegalcord → Cloud Sync** and click **Log In**. Authenticate with your Illegalcord account credentials.
-  </Step>
-  <Step title="Enable sync">
-    Toggle **Enable Cloud Sync** to the on position. Illegalcord immediately uploads your current settings and begins keeping them in sync whenever you make changes.
-  </Step>
-  <Step title="Restore on another device">
-    On any other device where you install Illegalcord, log in to the same account in the **Cloud Sync** tab and click **Pull Settings** to download your configuration.
-  </Step>
-</Steps>
+| Backup type | Includes |
+|---|---|
+| All settings | Settings, QuickCSS, plugin settings, and DataStore data. |
+| Plugins | Enabled plugin state and plugin settings. |
+| QuickCSS | Custom CSS from the QuickCSS editor. |
+| DataStore | Plugin data stored through `@api/DataStore`. |
 
 <Warning>
-  Cloud Sync stores your Illegalcord configuration only. It never touches your Discord account credentials, messages, or account settings. Your Discord data always stays under Discord's control.
+  Importing a backup overwrites matching local settings. Export first if you want a restore point.
 </Warning>
-
-## Keybinds
-
-The **Keybinds** tab lets you map Illegalcord actions to custom keyboard shortcuts.
-
-<Steps>
-  <Step title="Add a keybind">
-    Click **Add Keybind**, then choose an action from the dropdown — for example, **Toggle Compact Mode** or **Open Theme Switcher**.
-  </Step>
-  <Step title="Record the shortcut">
-    Click the key input field and press the key combination you want to use. Illegalcord records it instantly.
-  </Step>
-  <Step title="Set the scope">
-    Choose **Discord focused** to fire the shortcut only when Discord is the active window, or **Global** to fire it from anywhere on your desktop.
-  </Step>
-  <Step title="Save">
-    Click **Add** to confirm. The new keybind appears in the list immediately.
-  </Step>
-</Steps>
-
-<Tip>
-  To remove a keybind, hover over it in the list and click the **trash icon** that appears on the right.
-</Tip>
-
-## About
-
-The **About** tab shows your current Illegalcord version number, build date, and a link to the full changelog. Click **Check for Updates** to query the update server immediately. If a newer version is available, an **Update Now** button appears — click it to download and apply the update. Discord will reload automatically once the update is installed.
-
-<Note>
-  All Illegalcord settings save automatically as soon as you change them. There is no Save button to click and no risk of losing your changes if you close the settings panel.
-</Note>

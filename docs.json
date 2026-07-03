@@ -4,10 +4,14 @@
   "theme": "almond",
   "colors": {
     "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
+    "light": "#f3d8cf",
+    "dark": "#3c8d98"
   },
   "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
+  },
   "navigation": {
     "tabs": [
       {
@@ -17,6 +21,7 @@
             "group": "Get Started",
             "pages": [
               "introduction",
+              "source-structure",
               "installation",
               "quickstart"
             ]
@@ -24,9 +29,9 @@
           {
             "group": "Customization",
             "pages": [
-              "customization/themes",
+              "customization/settings",
               "customization/plugins",
-              "customization/settings"
+              "customization/themes"
             ]
           },
           {
@@ -52,7 +57,7 @@
         "tab": "Plugin Dev",
         "groups": [
           {
-            "group": "Introduction",
+            "group": "Start Here",
             "pages": [
               "plugin-dev/overview",
               "plugin-dev/getting-started"

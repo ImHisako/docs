@@ -1,175 +1,135 @@
 ---
-title: "Troubleshooting Common Illegalcord Errors and Issues"
+title: "Common Issues"
 sidebarTitle: "Common Issues"
-description: "Troubleshoot the most common Illegalcord issues — from installation failures to broken plugins, white screens, and update errors."
+description: "Troubleshoot source build, injection, plugin, theme, and settings problems in Illegalcord."
 ---
 
-Most Illegalcord problems have straightforward fixes. Work through the relevant section below from top to bottom — the steps are ordered from quickest to most involved. If none of these solutions resolve your issue, head to the [Illegalcord GitHub issues page](https://github.com/illegalcord/illegalcord) or the community support server for further assistance.
+Most Illegalcord issues are easier to solve if you identify the layer first: dependencies, build output, desktop injection, web extension output, plugin state, or settings data.
 
-<Accordion title="Illegalcord doesn't appear in Discord Settings">
-  If you don't see the **Illegalcord** section in Discord's Settings sidebar, the patch likely didn't complete successfully.
+## Dependency install fails
 
-  <Steps>
-    <Step title="Verify the installation completed">
-      Re-run the Illegalcord installer and check the output for any red error messages. A successful installation ends with a confirmation that Discord has been patched.
-    </Step>
-    <Step title="Fully quit Discord">
-      Discord keeps running in the background after you close its window. Right-click the Discord icon in your system tray (Windows) or menu bar (macOS) and choose **Quit Discord** before relaunching.
-    </Step>
-    <Step title="Re-run the installer">
-      If Discord was running during the initial installation, the patch may have been incomplete. Quit Discord fully, run the Illegalcord installer again, and relaunch Discord.
-    </Step>
-  </Steps>
-</Accordion>
+<Steps>
+  <Step title="Check Node.js">
+    Run `node -v`. Use Node.js 22 or newer.
+  </Step>
+  <Step title="Use the lockfile">
+    Run dependency install from the repository root:
 
-<Accordion title="Discord shows a white or blank screen after installing">
-  A white screen on startup almost always means a theme contains invalid CSS that prevents Discord's UI from rendering.
+    ```bash
+    pnpm install --frozen-lockfile
+    ```
+  </Step>
+  <Step title="Avoid mixed package managers">
+    Do not install dependencies with `npm install` or `yarn` in this repo. The project is configured for `pnpm`.
+  </Step>
+</Steps>
 
-  <Steps>
-    <Step title="Launch Discord in Safe Mode">
-      Hold **Shift** while clicking the Discord icon to start in Safe Mode. This disables all Illegalcord themes and plugins so Discord can load normally.
-    </Step>
-    <Step title="Identify the problematic theme">
-      Once Discord is running, go to **Settings → Illegalcord → Themes** and disable your themes one by one, relaunching normally after each toggle until the white screen stops appearing.
-    </Step>
-    <Step title="Fix or remove the broken theme">
-      Once you've identified the culprit, either remove the theme entirely or open its CSS file and correct any syntax errors. CSS validators like [csslint.net](https://csslint.net) can help you locate the problem quickly.
-    </Step>
-  </Steps>
+## Desktop build fails
 
-  <Warning>
-    If Discord fails to launch even in Safe Mode, try fully uninstalling and reinstalling Illegalcord, then reintroduce your themes one at a time.
-  </Warning>
-</Accordion>
+Run the build directly so you can read the first error:
 
-<Accordion title="A plugin causes Discord to crash or freeze">
-  A misbehaving plugin can throw unhandled JavaScript errors that crash Discord's renderer process. Safe Mode lets you recover without uninstalling Illegalcord.
+```bash
+pnpm build
+```
 
-  <Steps>
-    <Step title="Launch Discord in Safe Mode">
-      Hold **Shift** while clicking the Discord icon. All plugins are disabled in Safe Mode, so Discord should load cleanly.
-    </Step>
-    <Step title="Disable the problem plugin">
-      Go to **Settings → Illegalcord → Plugins**, find the plugin you suspect is causing the crash, and toggle it off.
-    </Step>
-    <Step title="Relaunch Discord normally">
-      Close Safe Mode and relaunch Discord without holding Shift. Your remaining plugins will load as normal.
-    </Step>
-    <Step title="Report the crash">
-      Open an issue on the plugin's repository (linked in its plugin card) and include any error messages from Discord's console (**Ctrl+Shift+I → Console tab**).
-    </Step>
-  </Steps>
-</Accordion>
+Then run targeted checks:
 
-<Accordion title="Themes are not applying">
-  If you've installed a theme but Discord's appearance hasn't changed, work through these checks.
+```bash
+pnpm testTsc
+pnpm lint
+pnpm lint:patches
+```
 
-  <Steps>
-    <Step title="Confirm the theme is enabled">
-      Go to **Settings → Illegalcord → Themes** and make sure the toggle next to your theme is switched on.
-    </Step>
-    <Step title="Check for theme conflicts">
-      By default, only one theme applies at a time. If multiple themes are enabled, they may conflict with each other. Disable all themes, then enable only the one you want.
-    </Step>
-    <Step title="Check the CSS for syntax errors">
-      Open the theme file in a text editor and look for unclosed braces, missing semicolons, or invalid property names. Even a single syntax error can prevent the entire stylesheet from loading.
-    </Step>
-    <Step title="Reload Discord">
-      Press **Ctrl+R** (Windows/Linux) or **Cmd+R** (macOS) to force a full reload of the Discord client and re-apply all active themes.
-    </Step>
-  </Steps>
+<Tip>
+  Patch failures are often caused by Discord changing bundled code. Use DEV output and Patch Helper when available to inspect the nearby source.
+</Tip>
 
-  <Tip>
-    Use Discord's built-in DevTools (**Ctrl+Shift+I**) to inspect elements and confirm whether your theme's CSS selectors are actually matching the elements you expect.
-  </Tip>
-</Accordion>
+## Illegalcord does not appear in Discord settings
 
-<Accordion title="Installation fails on macOS with a permissions error">
-  macOS Gatekeeper blocks unnotarized applications by default, which can prevent the Illegalcord installer from running.
+<Steps>
+  <Step title="Confirm the desktop bundle builds">
+    Run `pnpm build` and make sure it completes.
+  </Step>
+  <Step title="Run the injector">
+    Run `pnpm inject` from the repository root.
+  </Step>
+  <Step title="Fully restart Discord">
+    Quit Discord completely, including tray or background processes, then launch it again.
+  </Step>
+  <Step title="Repair if needed">
+    If the settings section still does not appear, run:
 
-  <Steps>
-    <Step title="Allow the installer in Security settings">
-      Open **System Settings → Privacy & Security**. Scroll down to the security section and click **Open Anyway** next to the Illegalcord installer warning.
-    </Step>
-    <Step title="Run the installer via Terminal (if the button doesn't appear)">
-      Open **Terminal** and run:
+    ```bash
+    pnpm repair
+    ```
+  </Step>
+</Steps>
 
-      ```bash
-      sudo ./Illegalcord-installer.app/Contents/MacOS/installer
-      ```
+## Web build output is missing
 
-      Enter your macOS account password when prompted. The installer will proceed with elevated permissions.
-    </Step>
-    <Step title="Relaunch Discord">
-      Once the installer confirms the patch was applied, launch Discord normally.
-    </Step>
-  </Steps>
+Build the web target:
 
-  <Note>
-    On macOS 13 Ventura and later, the Security & Privacy pane has moved to **System Settings** (not System Preferences). The option to allow the app still appears in the **Privacy & Security** section.
-  </Note>
-</Accordion>
+```bash
+pnpm buildWeb
+```
 
-<Accordion title="Installation fails on Linux">
-  Linux installations can fail for a few common reasons, most of which are easy to resolve.
+Then inspect `dist`. If the build fails, run:
 
-  <Steps>
-    <Step title="Make sure Discord is not running">
-      Close Discord completely before running the installer. Check for background processes with:
+```bash
+pnpm testTsc
+pnpm lint
+```
 
-      ```bash
-      pkill -x discord
-      ```
-    </Step>
-    <Step title="Check whether you're using Snap or Flatpak Discord">
-      Snap and Flatpak packages run in sandboxed environments that prevent Illegalcord from patching the application files. Run `which discord` or `snap list` to check. If you're using a sandboxed package, switch to the official `.tar.gz` release from Discord's website.
-    </Step>
-    <Step title="Use the manual installation method">
-      If the installer still fails, follow the manual installation steps in the [Illegalcord Linux guide](/installation). Manual installation patches the `app.asar` file directly and does not rely on the installer binary.
-    </Step>
-  </Steps>
+Browser extension loading rules vary by browser. Make sure you are loading the generated extension output supported by your browser.
 
-  <Warning>
-    Do not run the Illegalcord installer as root unless specifically instructed. Running it with `sudo` when Discord was installed as your regular user can cause file permission issues.
-  </Warning>
-</Accordion>
+## A plugin breaks the client
 
-<Accordion title="Illegalcord fails to auto-update">
-  If Illegalcord shows an update available but fails to apply it, try the following steps.
+<Steps>
+  <Step title="Disable the last changed plugin">
+    Open **Illegalcord Settings > Plugins** if the UI still loads, then toggle off the plugin you changed most recently.
+  </Step>
+  <Step title="Restore from backup">
+    If you exported a settings backup, restore a known-good plugin configuration from **Backup & Restore**.
+  </Step>
+  <Step title="Check the console">
+    Open Discord DevTools and inspect the Console for the plugin name and stack trace.
+  </Step>
+  <Step title="Fix source and rebuild">
+    Edit the plugin source, run `pnpm build`, then restart Discord.
+  </Step>
+</Steps>
 
-  <Steps>
-    <Step title="Check your internet connection">
-      Make sure you can reach GitHub from your network. Corporate firewalls or VPNs sometimes block GitHub release endpoints.
-    </Step>
-    <Step title="Trigger a manual update check">
-      Go to **Settings → Illegalcord → About** and click **Check for Updates**. This forces an immediate update attempt and surfaces any error messages.
-    </Step>
-    <Step title="Re-run the installer">
-      Download the latest installer from the official GitHub releases page and run it. This is equivalent to a manual update and will bring your installation to the current version regardless of what the auto-updater reports.
-    </Step>
-  </Steps>
+## A theme or QuickCSS breaks the UI
 
-  <Note>
-    If you're behind a proxy, set the `HTTPS_PROXY` environment variable before launching Discord so the auto-updater can reach GitHub's servers.
-  </Note>
-</Accordion>
+If the UI is still usable, open **Themes** or **Edit QuickCSS** and remove the last CSS change.
 
-<Accordion title="How to start Discord without Illegalcord temporarily (Safe Mode)">
-  Safe Mode lets you run Discord in its default, unmodified state without uninstalling Illegalcord. It's the fastest way to determine whether a problem is caused by Illegalcord or by Discord itself.
+If the UI is not usable:
 
-  <Steps>
-    <Step title="Launch Discord in Safe Mode">
-      Hold **Shift** while clicking the Discord desktop icon (or while running Discord from the command line). Discord will start with all Illegalcord themes and plugins disabled.
-    </Step>
-    <Step title="Test your issue">
-      Reproduce the problem you were experiencing. If it's gone in Safe Mode, a theme or plugin is the cause. If it persists, the issue is with Discord itself.
-    </Step>
-    <Step title="Return to normal mode">
-      Close Discord and relaunch it without holding Shift. All your Illegalcord settings will be restored exactly as you left them.
-    </Step>
-  </Steps>
+1. Open the settings folder from a previous known-good client if possible.
+2. Remove the broken local theme file or clear the QuickCSS backup data you imported.
+3. Rebuild and relaunch.
 
-  <Tip>
-    Safe Mode does not change or delete any of your Illegalcord settings. You can enter and exit it as many times as you need while debugging.
-  </Tip>
-</Accordion>
+<Warning>
+  Keep exported backups before large theme edits. CSS can hide controls you need to recover.
+</Warning>
+
+## Plugin metadata looks stale
+
+After adding, moving, renaming, or removing plugins, regenerate plugin metadata:
+
+```bash
+pnpm generatePluginJson
+```
+
+If you only changed one source family:
+
+```bash
+pnpm generateEquicordPluginJson
+pnpm generateVencordPluginJson
+```
+
+## TypeScript alias imports fail
+
+Check `tsconfig.json` for the alias you are using. Common aliases include `@api/*`, `@components/*`, `@utils/*`, `@webpack`, `@webpack/common`, `@plugins/*`, and `@equicordplugins/*`.
+
+Avoid deep relative imports when an alias exists.

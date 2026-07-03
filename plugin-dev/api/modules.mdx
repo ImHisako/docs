@@ -1,155 +1,86 @@
 ---
-title: "Illegalcord Plugin API: Webpack Modules and Patcher"
+title: "Webpack and Patches"
 sidebarTitle: "Modules"
-description: "Learn how to find Discord Webpack modules with findModule, findByProps, and findByDisplayName, then patch them using the Illegalcord Patcher API."
+description: "Find Discord Webpack modules and write source patches using the local Illegalcord APIs."
 ---
 
-Discord bundles all of its source code into a Webpack bundle at runtime. Illegalcord exposes a set of utilities that let you locate and interact with these internal modules — and patch their methods — without ever touching Discord's build pipeline directly.
+Discord code is bundled through Webpack. Illegalcord exposes lazy finders and a patch system so plugins can use Discord internals without importing them directly.
 
-## Finding Modules
+## Lazy finders
 
-Illegalcord provides three main functions for locating Webpack modules. Each targets a different way of identifying the module you need.
-
-### `findModule(filter)`
-
-`findModule` accepts a filter function and returns the first Webpack module for which that function returns `true`. Use this when you need fine-grained control over what you match.
+Use lazy finders at module scope:
 
 ```typescript
-import { findModule } from "@illegalcord/api";
+import { findByPropsLazy, findComponentByCodeLazy, findStoreLazy } from "@webpack";
 
-const MessageStore = findModule(m => m.getMessage && m.getMessages);
+const VoiceActions = findByPropsLazy("toggleSelfMute");
+const GuildStore = findStoreLazy("GuildStore");
+const SomeComponent = findComponentByCodeLazy(".someStableCodeFragment");
 ```
 
-<ParamField path="filter" type="(module: any) => boolean" required>
-  A predicate function that receives each module and returns `true` when a match is found.
-</ParamField>
-
-### `findByProps(...props)`
-
-`findByProps` returns the first module that contains **all** of the provided property names. This is the most common way to find stores and action modules, since their method names tend to be stable.
+Common stores and utilities are often already exported from `@webpack/common`:
 
 ```typescript
-import { findByProps } from "@illegalcord/api";
-
-const ChannelStore = findByProps("getChannel", "getDMFromUserId");
+import { FluxDispatcher, React, UserStore, useStateFromStores } from "@webpack/common";
 ```
 
-<ParamField path="props" type="string[]" required>
-  One or more property name strings. The returned module will have every property you specify.
-</ParamField>
+<Tip>
+  Before adding a finder, check `src/webpack/common`. Many stores and utilities are already mapped there.
+</Tip>
 
-### `findByDisplayName(name)`
+## CSS classes
 
-`findByDisplayName` finds a React component whose `displayName` matches the provided string. Use this when you want to patch or wrap a specific UI component.
+Use `findCssClassesLazy` for Discord's mangled class names:
 
 ```typescript
-import { findByDisplayName } from "@illegalcord/api";
+import { findCssClassesLazy } from "@webpack";
 
-const UserBadge = findByDisplayName("UserBadge");
+const classes = findCssClassesLazy("container", "avatar");
 ```
 
-<ParamField path="name" type="string" required>
-  The exact string value of the component's `displayName` property.
-</ParamField>
+Do not hardcode generated class prefixes or suffixes in plugin CSS.
 
-<Warning>
-  Module property names and component `displayName` values can change between Discord updates. Write your filters defensively — check for the combination of properties that uniquely identifies the module rather than relying on a single name.
-</Warning>
+## Declarative patches
 
----
-
-## Patching Modules
-
-Once you have a module, the **Patcher API** lets you monkey-patch its methods without replacing them outright. Every patch is scoped to a plugin name so Illegalcord can clean it up precisely.
-
-### Patch types
-
-<ParamField path="Patcher.before(pluginName, module, method, callback)" type="function">
-  Runs your `callback` **before** the original method executes. You can inspect or mutate the arguments array in place.
-</ParamField>
-
-<ParamField path="Patcher.after(pluginName, module, method, callback)" type="function">
-  Runs your `callback` **after** the original method executes. Receives the return value as the last argument so you can inspect or replace it.
-</ParamField>
-
-<ParamField path="Patcher.instead(pluginName, module, method, callback)" type="function">
-  **Replaces** the original method entirely. Your callback receives `(thisObj, args, original)` — call `original(...args)` if you still want the default behavior to run.
-</ParamField>
-
-### Example: intercepting outgoing messages
+Webpack source patches live on the plugin object:
 
 ```typescript
-import { Patcher, findByProps } from "@illegalcord/api";
+import { EquicordDevs } from "@utils/constants";
+import definePlugin from "@utils/types";
 
-const MessageActions = findByProps("sendMessage");
+export default definePlugin({
+    name: "PatchExample",
+    description: "Shows the shape of a Webpack patch.",
+    authors: [EquicordDevs.irritably],
 
-// Intercept outgoing messages
-Patcher.before("MyPlugin", MessageActions, "sendMessage", (thisObj, args) => {
-  const [channelId, message] = args;
-  console.log(`Sending to ${channelId}:`, message.content);
+    patches: [
+        {
+            find: "stableSourceString",
+            replacement: {
+                match: /stableSourceString.{0,80}?targetCall\(/,
+                replace: "$&$self.beforeTarget(arguments[0]),"
+            }
+        }
+    ],
+
+    beforeTarget(value: unknown) {
+        return value;
+    }
 });
 ```
 
-### Removing patches
+Use `$self` only for methods that live on the plugin object.
 
-Call `Patcher.unpatchAll` inside your plugin's `stop()` method to remove every patch your plugin has registered. Failing to do this leaves orphaned patches active even after the plugin is disabled.
+## Patch rules
 
-```typescript
-import { Patcher } from "@illegalcord/api";
+- Prefer string `find` anchors.
+- Use stable strings such as intl keys, action types, paths, or distinctive code.
+- Keep regex gaps bounded, usually `.{0,150}?`.
+- Capture only what you reuse.
+- Use `group: true` when multiple replacements must succeed together.
+- Use `predicate`, `fromBuild`, or `toBuild` for version or target gates.
+- Keep replacement strings small and move logic into plugin methods.
 
-// Inside your plugin's stop() method:
-Patcher.unpatchAll("MyPlugin");
-```
-
-<ParamField path="pluginName" type="string" required>
-  The same plugin name string you passed as the first argument to every `Patcher.before`, `Patcher.after`, or `Patcher.instead` call.
-</ParamField>
-
-<Tip>
-  Keep your plugin name consistent across all `Patcher.*` calls. A single `Patcher.unpatchAll("MyPlugin")` in `stop()` will cleanly remove every patch that shares that name, no matter how many you registered.
-</Tip>
-
----
-
-## Full example
-
-The steps below walk through a complete module-finding and patching workflow.
-
-<Steps>
-  <Step title="Find the module">
-    Use `findByProps` to locate the module that owns the method you want to patch.
-
-    ```typescript
-    import { findByProps } from "@illegalcord/api";
-
-    const MessageActions = findByProps("sendMessage");
-    ```
-  </Step>
-  <Step title="Register a patch in start()">
-    Apply your patch inside `start()` so it activates the moment your plugin is enabled.
-
-    ```typescript
-    import { Patcher } from "@illegalcord/api";
-
-    start() {
-      Patcher.before("MyPlugin", MessageActions, "sendMessage", (thisObj, args) => {
-        const [channelId, message] = args;
-        console.log(`Sending to ${channelId}:`, message.content);
-      });
-    }
-    ```
-  </Step>
-  <Step title="Clean up in stop()">
-    Remove all patches when your plugin stops to prevent stale behavior.
-
-    ```typescript
-    stop() {
-      Patcher.unpatchAll("MyPlugin");
-    }
-    ```
-  </Step>
-</Steps>
-
-<Note>
-  `findModule`, `findByProps`, and `findByDisplayName` all return `undefined` if no match is found. Guard against this with a null check before calling any method on the result, especially in plugins that target optional Discord features.
-</Note>
+<Warning>
+  Do not write broad patches with unbounded `.*?` or `.+?`. They are fragile and can rewrite the wrong module after Discord updates.
+</Warning>

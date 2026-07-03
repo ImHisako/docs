@@ -1,0 +1,74 @@
+---
+title: "Source Structure"
+sidebarTitle: "Source Structure"
+description: "A practical map of the Illegalcord repository so the documentation matches the local source code layout."
+---
+
+Illegalcord is a monorepo-style source tree, but only `packages/*` are part of `pnpm-workspace.yaml`. The website lives beside the code as a standalone Mintlify project.
+
+## Repository map
+
+| Path | Purpose |
+|---|---|
+| `src` | Main TypeScript source for the client mod, APIs, components, plugins, and Webpack patching. |
+| `src/plugins` | Stock Vencord plugins included by the build. |
+| `src/equicordplugins` | Equicord-specific plugins and API extensions. |
+| `src/userplugins` | Illegalcord-specific bundled plugins in this fork. |
+| `src/api` | Runtime APIs used by plugins, such as settings, commands, messages, context menus, badges, and notifications. |
+| `src/components` | Reusable UI components used by settings pages and plugin UIs. |
+| `src/webpack` | Webpack module finders, common Discord modules, and patching utilities. |
+| `src/main` | Desktop-side Electron code, updater helpers, CSP handling, installer IPC, and native integration. |
+| `browser` | Web extension and userscript entry points. |
+| `scripts` | Build, installer, lint, type generation, and plugin metadata scripts. |
+| `packages` | Workspace packages, including Discord types and Vencord type output. |
+| `dist` | Generated build output. Do not edit by hand. |
+| `Illegalcord Website` | Mintlify documentation site. It is not compiled into the client. |
+
+## Build commands
+
+Run these from the repository root:
+
+| Command | What it does |
+|---|---|
+| `pnpm install --frozen-lockfile` | Installs the exact dependencies from `pnpm-lock.yaml`. |
+| `pnpm build` | Builds the desktop client mod. |
+| `pnpm buildStandalone` | Builds a standalone desktop bundle. |
+| `pnpm buildWeb` | Builds the browser extension output. |
+| `pnpm watch` | Rebuilds the desktop target as files change. |
+| `pnpm watchWeb` | Rebuilds the web target as files change. |
+| `pnpm inject` | Installs the built desktop bundle into Discord. |
+| `pnpm uninject` | Removes the injected desktop bundle. |
+| `pnpm repair` | Re-runs the installer repair flow. |
+| `pnpm testTsc` | Runs TypeScript checking with `tsc --noEmit`. |
+| `pnpm lint` | Runs ESLint. |
+| `pnpm generatePluginJson` | Regenerates plugin metadata. |
+
+## Plugin folder choice
+
+Use the folder that matches the kind of plugin you are editing:
+
+| Folder | Use it for |
+|---|---|
+| `src/plugins/<name>` | Upstream-style Vencord plugin changes. |
+| `src/equicordplugins/<name>` | Equicord-specific plugins or Equicord API surfaces. |
+| `src/userplugins/<name>` | Illegalcord-specific plugins bundled by this fork. |
+
+Platform suffixes are part of the build filters. For example, `.desktop`, `.web`, `.dev`, `.discordDesktop`, `.vesktop`, and `.equibop` folders restrict where a plugin is included.
+
+## TypeScript aliases
+
+The source uses aliases from `tsconfig.json`:
+
+| Alias | Points to |
+|---|---|
+| `@api/*` | `src/api/*` |
+| `@components/*` | `src/components/*` |
+| `@utils/*` | `src/utils/*` |
+| `@webpack` | `src/webpack/webpack` |
+| `@webpack/common` | `src/webpack/common` |
+| `@plugins/*` | Plugin import paths resolved by the build. |
+| `@equicordplugins/*` | `src/equicordplugins/*` |
+
+<Tip>
+  Avoid `../../` when one of these aliases fits. The project is already configured to resolve them.
+</Tip>

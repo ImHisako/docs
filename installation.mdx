@@ -1,121 +1,127 @@
 ---
-title: "How to Install Illegalcord on Windows, macOS, and Linux"
+title: "Install Illegalcord"
 sidebarTitle: "Installation"
-description: "Step-by-step instructions to download and install Illegalcord on Windows, macOS, or Linux — takes just a few minutes to complete."
+description: "Install Illegalcord with the official installer, build it from source, inject it into Discord desktop, or create a browser extension build."
 ---
 
-Installing Illegalcord takes just a few minutes. The installer patches your existing Discord desktop application and leaves everything else on your system untouched. Follow the steps below for your operating system, then launch Discord to confirm the installation succeeded.
+Illegalcord has two installation paths. Most users can use the official installer project, while contributors can build directly from source.
 
-## Prerequisites
+<Button href="https://github.com/ImHisako/IllegalcordInstaller">
+  Open IllegalcordInstaller on GitHub
+</Button>
 
-Before you begin, make sure the **Discord desktop app** is already installed and has been launched at least once. Illegalcord patches the Discord installation it finds on your machine — it cannot run without it.
+<Button href="https://github.com/ImHisako/Illegalcord">
+  View Illegalcord source code
+</Button>
 
-## Installation Steps
+## Official installer
 
-<Tabs>
-  <Tab title="Windows">
-    <Warning>
-      Some antivirus software may flag the Illegalcord installer as a false positive because it patches another application's files. This is expected behavior. You can safely allow the installer to run; no malicious code is present. If you are unsure, review the open-source code on the Illegalcord GitHub repository before proceeding.
-    </Warning>
+The installer is maintained separately at [ImHisako/IllegalcordInstaller](https://github.com/ImHisako/IllegalcordInstaller). Use it when you want the installer-based flow instead of cloning and building this repository yourself.
 
-    <Steps>
-      <Step title="Download the installer">
-        Go to [illegalcord.xyz](https://illegalcord.xyz) and click **Download for Windows**. Save the `IllegalcordInstaller.exe` file to a convenient location such as your Downloads folder.
-      </Step>
-      <Step title="Run the installer">
-        Double-click `IllegalcordInstaller.exe`. If Windows SmartScreen appears, click **More info** → **Run anyway**. The installer will automatically locate your Discord installation and apply the patch.
-      </Step>
-      <Step title="Relaunch Discord">
-        Once the installer finishes, fully close Discord from the system tray (right-click the tray icon → **Quit Discord**), then reopen it. Illegalcord loads automatically on every subsequent Discord launch.
-      </Step>
-    </Steps>
-  </Tab>
+<Info>
+  The source code for the client lives at [ImHisako/Illegalcord](https://github.com/ImHisako/Illegalcord). Use the source flow below when you are developing, auditing, or building a custom version.
+</Info>
 
-  <Tab title="macOS">
-    <Steps>
-      <Step title="Download the disk image">
-        Visit [illegalcord.xyz](https://illegalcord.xyz) and click **Download for macOS**. This downloads an `Illegalcord.dmg` disk image to your Downloads folder.
-      </Step>
-      <Step title="Open the disk image">
-        Double-click `Illegalcord.dmg` to mount it. A Finder window opens showing the Illegalcord installer app.
-      </Step>
-      <Step title="Drag to Applications">
-        Drag the **Illegalcord Installer** icon into your **Applications** folder shortcut inside the Finder window.
-      </Step>
-      <Step title="Run the installer">
-        Open **Launchpad** or your **Applications** folder and launch **Illegalcord Installer**. The installer will find your Discord app, apply the patch, and confirm when it's done. If macOS shows a Gatekeeper warning, go to **System Settings → Privacy & Security** and click **Open Anyway**.
-      </Step>
-      <Step title="Relaunch Discord">
-        Quit Discord completely (⌘ + Q), then reopen it from your Applications folder or Dock. Illegalcord is now active.
-      </Step>
-    </Steps>
-  </Tab>
+## Source build
 
-  <Tab title="Linux">
-    <Steps>
-      <Step title="Choose your installation method">
-        Illegalcord offers two methods on Linux: a **one-line shell installer** (recommended for most users) and a **manual installation** for those who prefer full control.
+## Requirements
 
-        <Note>
-          If you installed Discord via **Flatpak** or **Snap**, the one-line installer may not detect it automatically. Use the manual method and point the installer at your Flatpak/Snap Discord path. Common paths are `/var/lib/flatpak/app/com.discordapp.Discord` (system) or `~/.local/share/flatpak/app/com.discordapp.Discord` (user).
-        </Note>
-      </Step>
+- Git.
+- Node.js 22 or newer. The root `package.json` declares `node >=22`.
+- `pnpm` 11.9.0 or newer.
+- Discord desktop if you plan to use `pnpm inject`.
 
-      <Step title="Option A — Shell installer (recommended)">
-        Open a terminal and run:
+Install `pnpm` if you do not already have it:
 
-        ```bash
-        curl -sSL https://illegalcord.xyz/install.sh | sh
-        ```
+```bash
+npm i -g pnpm
+```
 
-        The script detects your Discord installation, downloads the latest Illegalcord release, and applies the patch automatically. Follow any prompts that appear.
-      </Step>
+<Warning>
+  After installing dependencies, do not run the build or injector from an administrator or root terminal unless you know exactly why you need to. The source injector operates on your user-level Discord installation.
+</Warning>
 
-      <Step title="Option B — Manual installation">
-        If you prefer not to pipe directly to `sh`, download and inspect the archive first:
+## Clone and install
 
-        ```bash
-        # Download the latest release archive
-        curl -sSL https://illegalcord.xyz/releases/latest/illegalcord-linux.tar.gz \
-          -o illegalcord-linux.tar.gz
+```bash
+git clone https://github.com/ImHisako/Illegalcord
+cd Illegalcord
+pnpm install --frozen-lockfile
+```
 
-        # Extract the archive
-        tar -xzf illegalcord-linux.tar.gz
+## Desktop build
 
-        # Enter the extracted directory
-        cd illegalcord-linux
+Build the desktop bundle:
 
-        # Run the installer
-        ./install.sh
-        ```
+```bash
+pnpm build
+```
 
-        The installer will prompt you for the path to your Discord installation if it cannot detect it automatically.
-      </Step>
+Inject the built bundle into Discord desktop:
 
-      <Step title="Relaunch Discord">
-        Close any running Discord instance and relaunch it from your application launcher or terminal. Illegalcord initializes automatically each time Discord starts.
-      </Step>
-    </Steps>
-  </Tab>
-</Tabs>
+```bash
+pnpm inject
+```
 
-## Verifying the Installation
+Fully quit Discord, then launch it again. Open User Settings and look for the **Illegalcord Settings** section. It should contain tabs such as **Illegalcord**, **Plugins**, **Themes**, **Updater**, **Cloud**, and **Backup & Restore**.
 
-After Discord relaunches, confirm Illegalcord is active:
+## Web build
 
-<Steps>
-  <Step title="Open Discord Settings">
-    Click the **gear icon** (⚙️) in the bottom-left corner of Discord to open User Settings.
-  </Step>
-  <Step title="Scroll to the Illegalcord section">
-    Scroll past the standard Discord settings categories. You should see a new **Illegalcord** section near the bottom of the sidebar, with entries such as **Themes**, **Plugins**, and **Keybinds**.
-  </Step>
-</Steps>
+Build the browser extension target:
 
-If you don't see the Illegalcord section, try fully quitting and restarting Discord. If the problem persists, re-run the installer to re-apply the patch.
+```bash
+pnpm buildWeb
+```
 
-## Updating Illegalcord
+After the build finishes, check `dist` for the generated browser extension output. Load the matching unpacked extension or archive through your browser's extension developer tools.
 
-Illegalcord checks for updates automatically each time Discord launches and applies them silently in the background. You don't need to do anything — you'll always be on the latest version.
+<Info>
+  Browser support depends on the generated target and browser restrictions. Firefox extension archives may require Firefox Developer Edition or a compatible extension workflow.
+</Info>
 
-To update manually, open Discord Settings → scroll to **Illegalcord** → click **About** → click **Update Illegalcord**. Illegalcord will fetch and apply the latest release immediately.
+## Development builds
+
+Use watch mode while editing source:
+
+```bash
+pnpm watch
+```
+
+For web builds:
+
+```bash
+pnpm watchWeb
+```
+
+## Validate your build
+
+Use the targeted checks while developing:
+
+```bash
+pnpm testTsc
+pnpm lint
+pnpm lint-styles
+pnpm lint:intl
+pnpm lint:patches
+pnpm generatePluginJson
+```
+
+The full `pnpm test` script is heavier. It builds standalone output, runs type checks and linters, and regenerates plugin metadata.
+
+## Remove or repair injection
+
+If you need to remove the desktop injection:
+
+```bash
+pnpm uninject
+```
+
+If Discord was updated or the install state looks inconsistent:
+
+```bash
+pnpm repair
+```
+
+<Warning>
+  Client mods may violate Discord's Terms of Service. Use Illegalcord at your own risk.
+</Warning>

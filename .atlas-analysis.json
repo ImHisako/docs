@@ -1,11 +1,11 @@
 {
-  "projectType": "frontend",
-  "projectName": "Illegalcord",
-  "projectDescription": "A feature-rich, customizable Discord client that enhances your Discord experience with themes, plugins, and advanced settings.",
+  "projectType": "documentation",
+  "projectName": "Illegalcord Website",
+  "projectDescription": "A Mintlify documentation site for Illegalcord, aligned with the official installer repository, source repository, pnpm build scripts, plugin folders, settings tabs, and Vencord/Equicord plugin APIs.",
   "theme": "almond",
   "primaryColor": "#ef7025",
-  "lightColor": "#eec9bc",
-  "darkColor": "#4fa1ab",
+  "lightColor": "#f3d8cf",
+  "darkColor": "#3c8d98",
   "navigation": {
     "tabs": [
       {
@@ -15,6 +15,7 @@
             "group": "Get Started",
             "pages": [
               "introduction",
+              "source-structure",
               "installation",
               "quickstart"
             ]
@@ -22,9 +23,9 @@
           {
             "group": "Customization",
             "pages": [
-              "customization/themes",
+              "customization/settings",
               "customization/plugins",
-              "customization/settings"
+              "customization/themes"
             ]
           },
           {
@@ -50,7 +51,7 @@
         "tab": "Plugin Dev",
         "groups": [
           {
-            "group": "Introduction",
+            "group": "Start Here",
             "pages": [
               "plugin-dev/overview",
               "plugin-dev/getting-started"
@@ -76,23 +77,22 @@
     ]
   },
   "keyFeatures": [
-    "Easy one-click installation on Windows, macOS, and Linux",
-    "Theme support with a built-in theme store",
-    "Plugin system for extending Discord functionality",
-    "Privacy and security enhancements",
-    "Custom keybinds and shortcuts",
-    "Advanced message display options",
-    "Automatic updates",
-    "Developer tools for plugin creation"
+    "Installation paths for the official ImHisako/IllegalcordInstaller project and source builds from ImHisako/Illegalcord",
+    "Source-backed installation with pnpm build, buildWeb, inject, uninject, and repair commands",
+    "Repository structure page mapping docs to src, browser, scripts, packages, dist, and plugin folders",
+    "Settings documentation matching Illegalcord Settings, Plugins, Themes, Updater, Cloud, Backup & Restore, and Patch Helper",
+    "Plugin documentation aligned with src/plugins, src/equicordplugins, and src/userplugins",
+    "Developer examples using @utils/types, @api/Settings, @webpack, @webpack/common, and @components/*",
+    "Troubleshooting focused on dependency install, build, injection, plugin metadata, and settings recovery"
   ],
   "publicApiSurface": [
-    "Plugin API: definePlugin()",
-    "Plugin API: Webpack module finder",
-    "Plugin API: Patcher / monkey-patching utilities",
-    "Plugin API: React component utilities",
-    "Plugin API: Event system",
-    "Settings API: definePluginSettings()",
-    "UI API: showToast(), openModal()",
-    "Theme: CSS variable overrides"
+    "definePlugin from @utils/types",
+    "definePluginSettings from @api/Settings",
+    "OptionType from @utils/types",
+    "Webpack lazy finders from @webpack",
+    "Common stores and UI helpers from @webpack/common",
+    "Declarative plugin fields handled by PluginManager",
+    "Flux field subscriptions",
+    "QuickCSS and theme loading through local settings APIs"
   ]
 }

@@ -1,47 +1,46 @@
 ---
-title: "Illegalcord Features Overview: Everything You Can Do"
+title: "Feature Overview"
 sidebarTitle: "Overview"
-description: "Explore every feature Illegalcord adds to Discord — themes, plugins, message tweaks, privacy controls, keybinds, and more, all in one place."
+description: "A source-backed overview of the major Illegalcord capabilities documented by this site."
 ---
 
-Illegalcord layers a rich set of features on top of Discord, giving you control over how the client looks, behaves, and communicates. Whether you want a polished custom theme, tighter privacy settings, or keyboard shortcuts for every action, Illegalcord has a dedicated system for it — all without touching your Discord account.
+Illegalcord combines a Vencord-style plugin system with Equicord additions and Illegalcord-specific bundled plugins. The exact feature set depends on the build target and which plugins you enable.
 
 <CardGroup cols={2}>
-  <Card title="Themes" icon="palette" href="/customization/themes">
-    Apply full CSS themes to transform Discord's appearance from top to bottom.
-  </Card>
   <Card title="Plugins" icon="puzzle-piece" href="/customization/plugins">
-    Extend Illegalcord with community and first-party plugins for any workflow.
+    Enable stock, Equicord, and Illegalcord plugins from the built-in Plugins tab.
   </Card>
-  <Card title="Message Tweaks" icon="message" href="/features/message-tweaks">
-    Customize timestamps, embeds, compact mode, and message display behavior.
+  <Card title="QuickCSS and themes" icon="paintbrush" href="/customization/themes">
+    Customize Discord with QuickCSS, local themes, theme links, and activation modes.
   </Card>
-  <Card title="Privacy" icon="shield" href="/features/privacy">
-    Disable telemetry, hide typing indicators, and control read receipts.
+  <Card title="Settings and backups" icon="sliders" href="/customization/settings">
+    Configure client settings, update behavior, cloud sync, and JSON backup flows.
   </Card>
-  <Card title="Keybinds" icon="keyboard" href="/features/keybinds">
-    Assign custom keyboard shortcuts to Discord actions and Illegalcord features.
+  <Card title="Message tools" icon="message" href="/features/message-tweaks">
+    Use plugins for message display, translation, logging, quick replies, and chat controls.
   </Card>
-  <Card title="Settings" icon="sliders" href="/customization/settings">
-    Manage all Illegalcord preferences from one unified settings panel.
+  <Card title="Privacy tools" icon="shield" href="/features/privacy">
+    Review privacy-oriented plugins and settings before enabling them.
+  </Card>
+  <Card title="Shortcuts" icon="keyboard" href="/features/keybinds">
+    Use shortcut-focused plugins and the desktop Ctrl+Q option when supported.
   </Card>
 </CardGroup>
 
-## Full Feature List
+## Capability map
 
-The table below covers every major capability Illegalcord ships with out of the box. Some features require a specific plugin to be enabled — the **Notes** column calls those out.
-
-| Feature | Description | Notes |
-|---|---|---|
-| **Themes** | Full CSS theme support — load community themes or write your own | Requires a `.css` or `.theme.css` file |
-| **Plugins** | Extensible plugin system with enable/disable toggles per plugin | First-party and community plugins supported |
-| **Message Tweaks** | Compact mode, configurable timestamp formats, and embed controls | Embed blocking requires the EmbedBlocker plugin |
-| **Privacy** | Disable telemetry, hide typing indicators, suppress read receipts | NoTrack plugin required for analytics blocking |
-| **Keybinds** | Custom keyboard shortcuts for any Discord action or Illegalcord toggle | Global keybinds require OS-level accessibility permissions |
-| **Transparent Window** | Optional transparent client background that blends with your desktop | Works best paired with a matching CSS theme |
-| **Auto-Update** | Silent background updates keep Illegalcord current without interrupting you | Can be disabled in Settings → General |
-| **Cloud Sync** | Optionally sync your Illegalcord settings across multiple devices | Opt-in; requires an Illegalcord account |
+| Capability | Backing source |
+|---|---|
+| Plugin lifecycle | `src/utils/types.ts`, `src/api/PluginManager.ts` |
+| Plugin settings | `src/api/Settings.ts`, `src/components/settings/tabs/plugins` |
+| Theme loading | `src/api/Themes.ts`, `src/components/ThemeSettings` |
+| QuickCSS editor | `VencordNative.quickCss`, main settings quick actions |
+| Backup and restore | `src/api/SettingsSync/offline.ts` |
+| Cloud sync | `src/api/SettingsSync/cloudSync.ts`, `cloudSetup.tsx` |
+| Desktop injection | `src/main`, `scripts/runInstaller.mjs` |
+| Web extension builds | `browser`, `scripts/build/buildWeb.mjs` |
+| Patch tooling | `src/webpack/patchWebpack.ts`, Patch Helper tab |
 
 <Info>
-  Features marked as requiring a plugin are off by default. Head to **Settings → Plugins** to browse and enable them at any time.
+  Many features are plugin-provided. Search the Plugins tab by tag to see what your current build includes.
 </Info>

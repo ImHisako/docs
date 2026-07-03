@@ -1,33 +1,26 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
-
-# Documentation project instructions
+# Illegalcord Website instructions
 
 ## About this project
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Use the Mintlify MCP server, `https://mcp.mintlify.com`, to edit content and settings via MCP
-- Use the Mintlify docs MCP server, `https://www.mintlify.com/docs/mcp`, to query information about using Mintlify via MCP
+- This is a Mintlify documentation site stored in `Illegalcord Website/`.
+- Pages are MDX files with YAML frontmatter.
+- Site configuration lives in `docs.json`.
+- The docs folder is separate from the Illegalcord TypeScript build and is not part of `pnpm-workspace.yaml`.
 
-## Terminology
+## Product terminology
 
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
+- Use `Illegalcord` for the fork documented by this site.
+- Use `Equicord` and `Vencord` only when describing upstream source layout, inherited APIs, or credits.
+- Use `QuickCSS`, not `Custom CSS`, when referring to the built-in editor exposed by the client.
+- Use `Illegalcord Settings`, `Plugins`, `Themes`, `Updater`, `Cloud`, and `Backup & Restore` for settings tabs, matching `src/plugins/_core/settings.tsx`.
+- Use `stock plugins` for plugins in `src/plugins`, `Equicord plugins` for `src/equicordplugins`, and `Illegalcord plugins` for `src/userplugins`.
 
-## Style preferences
+## Writing style
 
-{/* Add any project-specific style rules below */}
-
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+- Use active voice and second person.
+- Keep sentences concise.
+- Use sentence case for headings.
+- Bold UI labels, for example **Plugins**.
+- Use code formatting for file names, commands, paths, setting names, and APIs.
+- Do not document features that are not visible in the local source tree.
+- Prefer source-backed commands such as `pnpm build`, `pnpm buildWeb`, `pnpm inject`, `pnpm uninject`, and `pnpm repair`.
